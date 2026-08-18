@@ -1,0 +1,8 @@
+# Prévia estática gerada localmente para revisão: não faz parte do site.
+previa-site-jgf.html
+
+# Arte original da logo. A versão usada no site está em public/logo-jgf.png.
+Images/
+
+# Configuração de ferramenta local.
+.claude/
