@@ -1,26 +1,286 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* ---------------------------------------------------------------
+   Design system inspirado na referência Ardentis (DeFi dashboard).
+   Paleta original do projeto: FCFCFC / 030303 / 112B33 / 56D7FD / B5B5B5.
+   O roxo (--accent) foi escolhido para conviver com o ciano: mesmo
+   nível de saturação, matiz fria, sem brigar com o azul da logo.
+   --------------------------------------------------------------- */
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #fcfcfc;
+  --surface: #f1f5f7;
+  --surface-2: #e4edf1;
+  --panel: #ffffff;
+  --border: rgba(3, 3, 3, 0.1);
+  --border-forte: rgba(3, 3, 3, 0.18);
+
+  --foreground: #030303;
+  --muted: #5b6a70;
+
+  /* Ciano da referência, escurecido no tema claro para ter contraste */
+  --brand: #0b7f9e;
+  --brand-vivo: #56d7fd;
+  --accent: #6455d8;
+
+  --petroleo: #112b33;
+
+  --glow-a: rgba(86, 215, 253, 0.3);
+  --glow-b: rgba(100, 85, 216, 0.2);
+  --card: rgba(255, 255, 255, 0.8);
+
+  --r-card: 1.5rem;
+  --r-panel: 2rem;
+}
+
+.dark {
+  --background: #05090f;
+  --surface: #0a1014;
+  --surface-2: #112b33;
+  --panel: #080d12;
+  --border: rgba(252, 252, 252, 0.09);
+  --border-forte: rgba(252, 252, 252, 0.16);
+
+  --foreground: #fcfcfc;
+  --muted: #b5b5b5;
+
+  --brand: #56d7fd;
+  --brand-vivo: #8ae6ff;
+  --accent: #8b7cff;
+
+  --petroleo: #112b33;
+
+  --glow-a: rgba(86, 215, 253, 0.22);
+  --glow-b: rgba(139, 124, 255, 0.18);
+  --card: rgba(252, 252, 252, 0.028);
 }
 
 @theme inline {
   --color-background: var(--background);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-panel: var(--panel);
+  --color-border: var(--border);
+  --color-border-forte: var(--border-forte);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-muted: var(--muted);
+  --color-brand: var(--brand);
+  --color-brand-vivo: var(--brand-vivo);
+  --color-accent: var(--accent);
+  --color-petroleo: var(--petroleo);
+  --color-card: var(--card);
+
+  --radius-card: var(--r-card);
+  --radius-panel: var(--r-panel);
+
+  --font-sans: var(--font-jakarta);
+  --font-mono: var(--font-mono-code);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+@layer base {
+  * {
+    border-color: var(--border);
+  }
+
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 5.5rem;
+    color-scheme: light;
+  }
+
+  html.dark {
+    color-scheme: dark;
+  }
+
+  body {
+    background: var(--background);
+    color: var(--foreground);
+    font-family: var(--font-sans), system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    letter-spacing: -0.011em;
+  }
+
+  h1,
+  h2,
+  h3 {
+    letter-spacing: -0.03em;
+  }
+
+  ::selection {
+    background: var(--brand);
+    color: var(--background);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--brand);
+    outline-offset: 3px;
+    border-radius: 6px;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@layer utilities {
+  /* Texto em gradiente: ciano para roxo */
+  .text-gradient {
+    background: linear-gradient(100deg, var(--brand) 0%, var(--accent) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  /* Rótulo de seção em pílula, assinatura da referência */
+  .pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    background: var(--card);
+    backdrop-filter: blur(12px);
+    padding: 0.55rem 1.1rem;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    line-height: 1;
+  }
+
+  /* Cartão padrão */
+  .glass {
+    background: var(--card);
+    backdrop-filter: blur(14px);
+    border: 1px solid var(--border);
+    border-radius: var(--r-card);
+  }
+
+  /* Painel grande, com o gradiente petróleo da referência no canto */
+  .panel {
+    position: relative;
+    overflow: hidden;
+    border-radius: var(--r-panel);
+    border: 1px solid var(--border);
+    background:
+      radial-gradient(
+        120% 100% at 0% 0%,
+        color-mix(in srgb, var(--petroleo) 55%, transparent) 0%,
+        transparent 55%
+      ),
+      var(--panel);
+  }
+
+  /* Borda que acende em ciano no topo e roxo na base */
+  .edge-glow {
+    border: 1px solid transparent;
+    background:
+      linear-gradient(var(--panel), var(--panel)) padding-box,
+      linear-gradient(
+          160deg,
+          color-mix(in srgb, var(--brand) 55%, transparent) 0%,
+          var(--border) 38%,
+          var(--border) 62%,
+          color-mix(in srgb, var(--accent) 45%, transparent) 100%
+        )
+        border-box;
+  }
+
+  /* Grão sutil, como nos painéis da referência */
+  .noise::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.5;
+    mix-blend-mode: overlay;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.35'/%3E%3C/svg%3E");
+  }
+
+  /* Etiqueta pequena dentro dos cards (UX Research, Figma...) */
+  .tag {
+    display: inline-flex;
+    align-items: center;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    background: color-mix(in srgb, var(--foreground) 5%, transparent);
+    padding: 0.3rem 0.7rem;
+    font-size: 0.7rem;
+    font-weight: 500;
+    color: var(--muted);
+    white-space: nowrap;
+  }
+
+  /* Chip de ícone com brilho, usado nos serviços */
+  .icon-chip {
+    display: grid;
+    place-items: center;
+    border-radius: 0.9rem;
+    border: 1px solid color-mix(in srgb, var(--brand) 35%, transparent);
+    background: linear-gradient(
+      150deg,
+      color-mix(in srgb, var(--brand) 28%, transparent),
+      color-mix(in srgb, var(--accent) 20%, transparent)
+    );
+    color: var(--brand);
+    box-shadow: 0 10px 30px -14px var(--glow-a);
+  }
+
+  /* Variante roxa do chip, usada no carrossel de tecnologias */
+  .icon-chip-roxo {
+    border-color: color-mix(in srgb, var(--accent) 40%, transparent);
+    background: linear-gradient(
+      150deg,
+      color-mix(in srgb, var(--accent) 26%, transparent),
+      color-mix(in srgb, var(--accent) 12%, transparent)
+    );
+    color: var(--accent);
+    box-shadow: 0 10px 30px -14px var(--glow-b);
+  }
+}
+
+/* Revelação ao rolar */
+.reveal {
+  transition:
+    opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+  transition-delay: var(--reveal-delay, 0ms);
+}
+
+@media (scripting: enabled) {
+  .reveal {
+    opacity: 0;
+    transform: translateY(26px);
+  }
+
+  .reveal[data-visible="true"] {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes float-slow {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+  50% {
+    transform: translate3d(0, -18px, 0);
+  }
+}
+
+.animate-float-slow {
+  animation: float-slow 10s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  .reveal {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+
+  .animate-float-slow {
+    animation: none;
+  }
 }
