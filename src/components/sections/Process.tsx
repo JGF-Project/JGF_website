@@ -30,9 +30,10 @@ export function Process() {
               align="left"
             />
 
-            {/* Cards alinhados e do mesmo tamanho: o grid estica todos os
-                itens da linha e as etiquetas ficam presas na base. */}
-            <ol className="relative z-10 mt-12 grid items-stretch gap-5 md:grid-cols-2 xl:grid-cols-4">
+            {/* Cards sempre do mesmo tamanho: `auto-rows-fr` iguala a altura
+                de todas as linhas do grid (e não só a dos itens de uma mesma
+                linha), e as etiquetas ficam presas na base de cada card. */}
+            <ol className="relative z-10 mt-12 grid auto-rows-fr items-stretch gap-5 md:grid-cols-2 xl:grid-cols-4">
               {process.steps.map((step, i) => (
                 <Reveal as="li" key={step.step} delay={i * 100}>
                   <article className="edge-glow flex h-full min-h-[280px] flex-col rounded-card p-6">

@@ -2,10 +2,12 @@
 
 Coloque aqui os prints reais de cada projeto do portfólio.
 
-| Arquivo               | Projeto                    |
-| --------------------- | -------------------------- |
-| `rr-barbearia.png`    | RR Barbearia               |
-| `projeto-2.png`       | Segundo projeto (em ajuste) |
+| Arquivo               | Projeto          |
+| --------------------- | ---------------- |
+| `rr-barbearia.png`    | RR Barbearia     |
+| `confirmai.png`       | confirmai        |
+| `vlm-presentes.png`   | VLM Presentes    |
+| `barber-daniels.png`  | Barber Daniel's  |
 
 ## Como ativar no site
 
