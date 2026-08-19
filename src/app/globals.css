@@ -86,7 +86,9 @@
 
   html {
     scroll-behavior: smooth;
-    scroll-padding-top: 5.5rem;
+    /* O recuo das âncoras já vem do `scroll-mt-24` de cada seção. Definir
+       scroll-padding-top aqui somaria os dois e abriria um vão grande
+       abaixo do cabeçalho fixo. */
     color-scheme: light;
   }
 
@@ -269,6 +271,21 @@
   animation: float-slow 10s ease-in-out infinite;
 }
 
+/* Faixa contínua da vitrine de projetos. O percurso é de metade da lista,
+   porque ela é duplicada: assim o laço fecha sem salto visível. */
+@keyframes esteira {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-esteira {
+  animation: esteira 46s linear infinite;
+}
+
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
@@ -280,7 +297,8 @@
     transition: none;
   }
 
-  .animate-float-slow {
+  .animate-float-slow,
+  .animate-esteira {
     animation: none;
   }
 }

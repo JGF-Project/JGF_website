@@ -11,6 +11,7 @@ export interface NavItem {
   href: string;
 }
 
+
 export interface Service {
   id: string;
   title: string;
@@ -36,6 +37,11 @@ export interface Project {
   /** Caminho em /public. Sem screenshot, o card exibe um espaço reservado. */
   screenshot: string | null;
   screenshotAlt: string;
+  /**
+   * Telas do projeto para a vitrine. Cada posição vira um quadro na faixa:
+   * com caminho preenchido mostra a imagem, vazia mostra "imagem em breve".
+   */
+  gallery: (string | null)[];
   href: string | null;
   status: "live" | "coming-soon";
 }
@@ -119,6 +125,10 @@ export interface SiteContent {
     comingSoon: string;
     featuresLabel: string;
     techLabel: string;
+    /** Vitrine de telas exibida no topo da seção. */
+    galleryTitle: string;
+    gallerySubtitle: string;
+    galleryPending: string;
   };
   tech: {
     eyebrow: string;

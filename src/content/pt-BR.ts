@@ -140,6 +140,10 @@ export const ptBR: SiteContent = {
     comingSoon: "Em breve",
     featuresLabel: "Principais funcionalidades",
     techLabel: "Tecnologias utilizadas",
+    galleryTitle: "Telas dos projetos",
+    gallerySubtitle:
+      "Um passeio pelas interfaces que já entregamos. Passe o mouse para parar.",
+    galleryPending: "Imagem em breve",
     projects: [
       {
         id: "rr-barbearia",
@@ -159,6 +163,7 @@ export const ptBR: SiteContent = {
         screenshot: null,
         screenshotAlt:
           "Tela inicial do site da RR Barbearia com o agendamento online",
+        gallery: [null, null, null],
         href: "https://rrbarbearia.vercel.app/",
         status: "live",
       },
@@ -179,6 +184,7 @@ export const ptBR: SiteContent = {
         screenshot: null,
         screenshotAlt:
           "Tela inicial do confirmai mostrando a confirmação de consultas por WhatsApp",
+        gallery: [null, null, null],
         href: "https://confirmaclinica.vercel.app/",
         status: "live",
       },
@@ -199,6 +205,7 @@ export const ptBR: SiteContent = {
         screenshot: null,
         screenshotAlt:
           "Tela inicial do site da VLM Presentes com brindes corporativos e presentes personalizados",
+        gallery: [null, null, null],
         href: "https://vlmpresentes.vercel.app/",
         status: "live",
       },
@@ -219,6 +226,7 @@ export const ptBR: SiteContent = {
         screenshot: null,
         screenshotAlt:
           "Tela inicial do site da Barber Daniel's com o agendamento online",
+        gallery: [null, null, null],
         href: "https://barber-daniels.vercel.app/",
         status: "live",
       },

@@ -1,6 +1,7 @@
 import { Container } from "@/components/ui/Container";
 import { Reveal } from "@/components/ui/Reveal";
 import { ArrowRightIcon } from "@/components/ui/icons";
+import { ProjectShowcase } from "./ProjectShowcase";
 import { content } from "@/content";
 
 export function Hero() {
@@ -12,7 +13,12 @@ export function Hero() {
       className="relative isolate overflow-hidden pt-32 pb-16 sm:pt-40 sm:pb-24"
     >
       <Container>
-        <div className="flex flex-col items-center text-center">
+        {/* Banner das telas dos projetos, no topo, como no carrossel do Itaú */}
+        <Reveal>
+          <ProjectShowcase />
+        </Reveal>
+
+        <div className="mt-14 flex flex-col items-center text-center sm:mt-16">
           <Reveal>
             <span className="pill text-muted">
               <span className="relative flex h-2 w-2">
