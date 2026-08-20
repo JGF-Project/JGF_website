@@ -10,15 +10,14 @@ export function Hero() {
   return (
     <section
       id="inicio"
-      className="relative isolate overflow-hidden pt-32 pb-16 sm:pt-40 sm:pb-24"
+      className="relative isolate overflow-hidden pt-[72px] pb-16 sm:pb-24"
     >
-      <Container>
-        {/* Banner das telas dos projetos, no topo, como no carrossel do Itaú */}
-        <Reveal>
-          <ProjectShowcase />
-        </Reveal>
+      {/* Banner de largura total: fica fora do Container de propósito, para
+          ocupar a viewport de ponta a ponta como no carrossel do Itaú. */}
+      <ProjectShowcase />
 
-        <div className="mt-14 flex flex-col items-center text-center sm:mt-16">
+      <Container>
+        <div className="mt-16 flex flex-col items-center text-center sm:mt-20">
           <Reveal>
             <span className="pill text-muted">
               <span className="relative flex h-2 w-2">

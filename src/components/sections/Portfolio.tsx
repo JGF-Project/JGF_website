@@ -42,7 +42,10 @@ function ProjectCard({
 
   return (
     <article
-      className={`panel noise grid lg:grid-cols-2 ${
+      // Alvo da navegação vinda do carrossel. O destaque é feito por CSS
+      // (`:target`), sem estado nem JavaScript.
+      id={`projeto-${project.id}`}
+      className={`panel noise grid scroll-mt-28 lg:grid-cols-2 ${
         isComingSoon ? "opacity-90" : ""
       }`}
     >

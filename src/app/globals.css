@@ -257,6 +257,22 @@
   }
 }
 
+/* Projeto alcançado pelo carrossel: a borda acende e cede aos poucos,
+   marcando onde o visitante chegou sem piscar na tela. */
+@keyframes destaque-projeto {
+  0% {
+    box-shadow: 0 0 0 0 color-mix(in srgb, var(--brand) 55%, transparent);
+  }
+  100% {
+    box-shadow: 0 0 0 10px transparent;
+  }
+}
+
+article[id^="projeto-"]:target {
+  border-color: color-mix(in srgb, var(--brand) 55%, transparent);
+  animation: destaque-projeto 2.4s ease-out;
+}
+
 @keyframes float-slow {
   0%,
   100% {

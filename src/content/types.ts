@@ -122,6 +122,8 @@ export interface SiteContent {
     subtitle: string;
     projects: Project[];
     viewProject: string;
+    /** Botão do carrossel: leva ao projeto detalhado, não ao site externo. */
+    discoverProject: string;
     comingSoon: string;
     featuresLabel: string;
     techLabel: string;

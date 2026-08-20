@@ -137,6 +137,7 @@ export const ptBR: SiteContent = {
     subtitle:
       "Trabalhos reais desenvolvidos pela JGF Company para clientes reais.",
     viewProject: "Visualizar projeto",
+    discoverProject: "Conhecer projeto",
     comingSoon: "Em breve",
     featuresLabel: "Principais funcionalidades",
     techLabel: "Tecnologias utilizadas",
@@ -163,8 +164,8 @@ export const ptBR: SiteContent = {
         screenshot: null,
         screenshotAlt:
           "Tela inicial do site da RR Barbearia com o agendamento online",
-        gallery: [null, null, null],
-        href: "https://rrbarbearia.vercel.app/",
+        gallery: ["/portfolio/rr-barbearia.png"],
+        href: "https://rrbarbearia.vercel.app/#inicio",
         status: "live",
       },
       {
@@ -184,7 +185,7 @@ export const ptBR: SiteContent = {
         screenshot: null,
         screenshotAlt:
           "Tela inicial do confirmai mostrando a confirmação de consultas por WhatsApp",
-        gallery: [null, null, null],
+        gallery: ["/portfolio/confirmai.png"],
         href: "https://confirmaclinica.vercel.app/",
         status: "live",
       },
@@ -205,7 +206,7 @@ export const ptBR: SiteContent = {
         screenshot: null,
         screenshotAlt:
           "Tela inicial do site da VLM Presentes com brindes corporativos e presentes personalizados",
-        gallery: [null, null, null],
+        gallery: ["/portfolio/vlm-presentes.png"],
         href: "https://vlmpresentes.vercel.app/",
         status: "live",
       },
@@ -226,7 +227,7 @@ export const ptBR: SiteContent = {
         screenshot: null,
         screenshotAlt:
           "Tela inicial do site da Barber Daniel's com o agendamento online",
-        gallery: [null, null, null],
+        gallery: ["/portfolio/barber-daniels.png"],
         href: "https://barber-daniels.vercel.app/",
         status: "live",
       },
