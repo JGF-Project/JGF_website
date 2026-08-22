@@ -213,13 +213,18 @@
     white-space: nowrap;
   }
 
-  /* Marcador de ícone: cor chapada, sem gradiente e sem sombra projetada. */
+  /* Chip do ícone: quadrado arredondado com um leve relevo, para o ícone
+     não parecer colado no fundo do card. */
   .icon-chip {
     display: grid;
     place-items: center;
-    border-radius: var(--r-min);
-    border: 1px solid var(--border);
-    background: var(--surface-2);
+    border-radius: 0.7rem;
+    border: 1px solid color-mix(in srgb, var(--brand) 22%, transparent);
+    background: linear-gradient(
+      160deg,
+      color-mix(in srgb, var(--brand) 20%, transparent) 0%,
+      color-mix(in srgb, var(--brand) 6%, transparent) 100%
+    );
     color: var(--brand);
   }
 

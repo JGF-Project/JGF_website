@@ -16,7 +16,9 @@ export function Services() {
           subtitle={services.subtitle}
         />
 
-        <div className="mt-14 grid gap-5 sm:grid-cols-2">
+        {/* `auto-rows-fr` iguala a altura das linhas: os quatro cards ficam
+            do mesmo tamanho em qualquer largura. */}
+        <div className="mt-14 grid auto-rows-fr items-stretch gap-5 sm:grid-cols-2">
           {services.items.map((service, i) => {
             const Icon =
               serviceIcons[service.id as keyof typeof serviceIcons] ?? GlobeIcon;
@@ -25,21 +27,21 @@ export function Services() {
               <Reveal key={service.id} delay={i * 90}>
                 {/* Card no estilo "Capital Efficiency": borda que acende,
                     chip de ícone e canto bem arredondado */}
-                <article className="edge-glow relative h-full overflow-hidden rounded-card p-7 sm:p-8">
-                  <div className="icon-chip relative h-12 w-12">
-                    <Icon className="h-[22px] w-[22px]" />
+                {/* Composição centralizada: chip do ícone no topo, título e
+                    apoio abaixo, como na referência. */}
+                <article className="edge-glow relative flex h-full flex-col items-center overflow-hidden rounded-card p-8 text-center sm:p-10">
+                  <div className="icon-chip h-14 w-14">
+                    <Icon className="h-6 w-6" />
                   </div>
 
-                  <h3 className="relative mt-5 text-xl font-semibold">
+                  <h3 className="mt-6 text-2xl font-semibold">
                     {service.title}
                   </h3>
-                  <p className="relative mt-2.5 text-sm leading-relaxed text-muted">
+                  <p className="mt-3 max-w-sm text-sm leading-relaxed text-muted">
                     {service.description}
                   </p>
 
-                  {/* Sem sequência de ✓: a lista respira com espaçamento e
-                      um traço fino de coluna, que já separa cada item. */}
-                  <ul className="relative mt-6 space-y-2 border-l border-border pl-4">
+                  <ul className="mt-6 space-y-1.5">
                     {service.bullets.map((bullet) => (
                       <li key={bullet} className="text-sm text-muted">
                         {bullet}
