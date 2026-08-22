@@ -54,6 +54,11 @@
      profundidade, não o gradiente. */
   --ambiente-a: rgba(11, 127, 158, 0.09);
   --ambiente-b: rgba(100, 85, 216, 0.07);
+
+  /* Ondas do fundo animado. No claro, azul e verde bem lavados. */
+  --onda-1: rgba(86, 215, 253, 0.3);
+  --onda-2: rgba(45, 212, 191, 0.24);
+  --onda-3: rgba(100, 85, 216, 0.14);
 }
 
 .dark {
@@ -82,6 +87,11 @@
 
   --ambiente-a: rgba(86, 215, 253, 0.1);
   --ambiente-b: rgba(139, 124, 255, 0.08);
+
+  /* No escuro, azul e roxo mais profundos, como na primeira referência. */
+  --onda-1: rgba(29, 78, 216, 0.5);
+  --onda-2: rgba(86, 215, 253, 0.22);
+  --onda-3: rgba(109, 92, 255, 0.34);
 }
 
 @theme inline {
@@ -384,6 +394,113 @@
 article[id^="projeto-"]:target {
   border-color: color-mix(in srgb, var(--brand) 55%, transparent);
   animation: destaque-projeto 2.4s ease-out;
+}
+
+/* ---------------------------------------------------------------
+   Fundo vivo: manchas orgânicas que derivam devagar atrás de todo o
+   conteúdo. São gradientes radiais, sem filter: blur, porque o filtro
+   em elementos grandes custa caro e o gradiente já nasce suave.
+   Só `transform` e `opacity` são animados, então o navegador resolve
+   tudo na GPU, sem recalcular layout.
+   --------------------------------------------------------------- */
+.fundo-vivo {
+  position: fixed;
+  inset: -10% -10% -10% -10%;
+  z-index: -10;
+  overflow: hidden;
+  pointer-events: none;
+  contain: strict;
+}
+
+.onda {
+  position: absolute;
+  border-radius: 50%;
+  will-change: transform;
+}
+
+.onda-1 {
+  top: -10%;
+  left: -5%;
+  width: 70vw;
+  height: 70vw;
+  background: radial-gradient(circle, var(--onda-1) 0%, transparent 62%);
+}
+
+.onda-2 {
+  top: 35%;
+  right: -15%;
+  width: 60vw;
+  height: 60vw;
+  background: radial-gradient(circle, var(--onda-2) 0%, transparent 62%);
+}
+
+.onda-3 {
+  bottom: -20%;
+  left: 20%;
+  width: 75vw;
+  height: 55vw;
+  background: radial-gradient(ellipse, var(--onda-3) 0%, transparent 65%);
+}
+
+@keyframes deriva-a {
+  from {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  to {
+    transform: translate3d(6vw, 5vh, 0) scale(1.12);
+  }
+}
+
+@keyframes deriva-b {
+  from {
+    transform: translate3d(0, 0, 0) scale(1.08);
+  }
+  to {
+    transform: translate3d(-7vw, -6vh, 0) scale(1);
+  }
+}
+
+@keyframes deriva-c {
+  from {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  to {
+    transform: translate3d(5vw, -4vh, 0) scale(1.15);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .onda-1 {
+    animation: deriva-a 34s ease-in-out infinite alternate;
+  }
+
+  .onda-2 {
+    animation: deriva-b 42s ease-in-out infinite alternate;
+  }
+
+  .onda-3 {
+    animation: deriva-c 38s ease-in-out infinite alternate;
+  }
+
+  /* A rolagem move a camada inteira em ritmo próprio, criando a
+     transição entre seções sem nenhum JavaScript. Onde o navegador não
+     suportar linha do tempo de scroll, resta a deriva contínua. */
+  @supports (animation-timeline: scroll()) {
+    .fundo-vivo {
+      animation: fundo-rola linear both;
+      animation-timeline: scroll(root block);
+      will-change: transform;
+    }
+
+    @keyframes fundo-rola {
+      from {
+        transform: translate3d(0, 0, 0);
+      }
+      to {
+        transform: translate3d(-4vw, -12vh, 0);
+      }
+    }
+  }
 }
 
 /* Flutuação quase imperceptível das etiquetas sobre o mockup. Cada uma

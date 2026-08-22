@@ -18,7 +18,7 @@ export function Hero() {
   return (
     <section
       id="inicio"
-      className="ambiente relative isolate scroll-mt-24 pt-28 pb-20 sm:pt-32 sm:pb-24"
+      className="relative scroll-mt-24 pt-28 pb-20 sm:pt-32 sm:pb-24"
     >
       <Container>
         {/* 1. Texto principal, no canto superior esquerdo */}

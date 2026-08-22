@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Plus_Jakarta_Sans, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme/ThemeProvider";
+import { BackgroundAmbience } from "@/components/layout/BackgroundAmbience";
 import { content } from "@/content";
 import { site } from "@/lib/site";
 
@@ -74,6 +75,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           enableSystem
           disableTransitionOnChange
         >
+          <BackgroundAmbience />
           {children}
         </ThemeProvider>
       </body>
