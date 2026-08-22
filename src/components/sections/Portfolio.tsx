@@ -3,7 +3,6 @@ import { Container } from "@/components/ui/Container";
 import { Reveal } from "@/components/ui/Reveal";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { ExternalIcon } from "@/components/ui/icons";
-import { ProjectShowcase } from "./ProjectShowcase";
 import { content } from "@/content";
 import type { Project } from "@/content/types";
 
@@ -18,16 +17,8 @@ export function Portfolio() {
           title={portfolio.title}
           subtitle={portfolio.subtitle}
         />
-      </Container>
 
-      {/* Vitrine de largura total: o projeto aparece grande antes de ser
-          explicado. Fica fora do Container de propósito. */}
-      <div className="mt-12">
-        <ProjectShowcase />
-      </div>
-
-      <Container>
-        <div className="mt-16 flex flex-col gap-8">
+        <div className="mt-14 flex flex-col gap-8">
           {portfolio.projects.map((project, i) => (
             <Reveal key={project.id} delay={i * 100}>
               <ProjectCard project={project} reversed={i % 2 === 1} />
