@@ -14,11 +14,8 @@ export function Tech() {
       id="tecnologias"
       className="relative scroll-mt-24 overflow-hidden py-20 sm:py-28"
     >
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-0 -z-10 bg-surface/40"
-      />
-
+      {/* Sem faixa de cor própria: o fundo animado do site precisa atravessar
+          esta seção sem corte, como uma composição única. */}
       <Container>
         <SectionHeading
           eyebrow={tech.eyebrow}

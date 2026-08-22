@@ -39,3 +39,9 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# previa autocontida gerada localmente, so para conferencia visual
+/preview-jgf.html
+
+# referencias visuais enviadas pelo Guilherme, nao entram no site
+/Images/

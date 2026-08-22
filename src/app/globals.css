@@ -397,112 +397,143 @@ article[id^="projeto-"]:target {
 }
 
 /* ---------------------------------------------------------------
-   Fundo vivo: manchas orgânicas que derivam devagar atrás de todo o
-   conteúdo. São gradientes radiais, sem filter: blur, porque o filtro
-   em elementos grandes custa caro e o gradiente já nasce suave.
-   Só `transform` e `opacity` são animados, então o navegador resolve
-   tudo na GPU, sem recalcular layout.
+   Fundo vivo: formas SVG desenhadas, atras de todo o conteudo.
+   Cada camada tem deriva propria e ritmo proprio de parallax, o que
+   cria profundidade. Só transform e animado, entao o navegador
+   resolve tudo na GPU sem recalcular layout.
    --------------------------------------------------------------- */
 .fundo-vivo {
   position: fixed;
-  inset: -10% -10% -10% -10%;
+  inset: 0;
   z-index: -10;
   overflow: hidden;
   pointer-events: none;
   contain: strict;
 }
 
-.onda {
+.fundo-svg {
   position: absolute;
-  border-radius: 50%;
+  /* Maior que a viewport: as formas entram e saem pelas bordas em vez
+     de terminarem numa linha reta dentro da tela. */
+  inset: -18%;
+  width: 136%;
+  height: 136%;
+}
+
+/* Cada tema mostra a sua composicao */
+.fundo-claro {
+  display: block;
+}
+.fundo-escuro {
+  display: none;
+}
+.dark .fundo-claro {
+  display: none;
+}
+.dark .fundo-escuro {
+  display: block;
+}
+
+.parallax,
+.deriva {
   will-change: transform;
 }
 
-.onda-1 {
-  top: -10%;
-  left: -5%;
-  width: 70vw;
-  height: 70vw;
-  background: radial-gradient(circle, var(--onda-1) 0%, transparent 62%);
-}
-
-.onda-2 {
-  top: 35%;
-  right: -15%;
-  width: 60vw;
-  height: 60vw;
-  background: radial-gradient(circle, var(--onda-2) 0%, transparent 62%);
-}
-
-.onda-3 {
-  bottom: -20%;
-  left: 20%;
-  width: 75vw;
-  height: 55vw;
-  background: radial-gradient(ellipse, var(--onda-3) 0%, transparent 65%);
-}
-
-@keyframes deriva-a {
+/* Deriva continua: ciclos longos e em sentidos diferentes, para o
+   desenho nunca repetir a mesma combinacao. */
+@keyframes deriva-massa {
   from {
     transform: translate3d(0, 0, 0) scale(1);
   }
   to {
-    transform: translate3d(6vw, 5vh, 0) scale(1.12);
+    transform: translate3d(-2.5%, 1.4%, 0) scale(1.035);
   }
 }
 
-@keyframes deriva-b {
+@keyframes deriva-rim {
   from {
-    transform: translate3d(0, 0, 0) scale(1.08);
+    transform: translate3d(0, 0, 0) scale(1.02);
   }
   to {
-    transform: translate3d(-7vw, -6vh, 0) scale(1);
+    transform: translate3d(2.2%, -1.8%, 0) scale(1);
   }
 }
 
-@keyframes deriva-c {
+@keyframes deriva-violeta {
   from {
     transform: translate3d(0, 0, 0) scale(1);
   }
   to {
-    transform: translate3d(5vw, -4vh, 0) scale(1.15);
+    transform: translate3d(1.6%, 2.2%, 0) scale(1.05);
+  }
+}
+
+/* Parallax: a rolagem desloca cada camada num ritmo diferente. */
+@keyframes parallax-fundo {
+  to {
+    transform: translate3d(0, -4%, 0);
+  }
+}
+
+@keyframes parallax-meio {
+  to {
+    transform: translate3d(0, -9%, 0);
+  }
+}
+
+@keyframes parallax-frente {
+  to {
+    transform: translate3d(0, -15%, 0);
   }
 }
 
 @media (prefers-reduced-motion: no-preference) {
-  .onda-1 {
-    animation: deriva-a 34s ease-in-out infinite alternate;
+  .deriva-massa {
+    animation: deriva-massa 38s ease-in-out infinite alternate;
   }
 
-  .onda-2 {
-    animation: deriva-b 42s ease-in-out infinite alternate;
+  .deriva-rim {
+    animation: deriva-rim 31s ease-in-out infinite alternate;
   }
 
-  .onda-3 {
-    animation: deriva-c 38s ease-in-out infinite alternate;
+  .deriva-violeta {
+    animation: deriva-violeta 25s ease-in-out infinite alternate;
   }
 
-  /* A rolagem move a camada inteira em ritmo próprio, criando a
-     transição entre seções sem nenhum JavaScript. Onde o navegador não
-     suportar linha do tempo de scroll, resta a deriva contínua. */
+  /* O deslocamento por rolagem vive em CSS puro, sem JavaScript. Onde o
+     navegador nao suportar linha do tempo de scroll, resta a deriva. */
   @supports (animation-timeline: scroll()) {
-    .fundo-vivo {
-      animation: fundo-rola linear both;
+    .parallax {
       animation-timeline: scroll(root block);
-      will-change: transform;
+      animation-fill-mode: both;
+      animation-timing-function: linear;
     }
 
-    @keyframes fundo-rola {
-      from {
-        transform: translate3d(0, 0, 0);
-      }
-      to {
-        transform: translate3d(-4vw, -12vh, 0);
-      }
+    .parallax-fundo {
+      animation-name: parallax-fundo;
+    }
+    .parallax-meio {
+      animation-name: parallax-meio;
+    }
+    .parallax-frente {
+      animation-name: parallax-frente;
     }
   }
 }
 
+/* No celular a composicao perde a camada da frente: tela estreita nao
+   comporta tres arcos sem virar mancha. */
+@media (max-width: 640px) {
+  .onda-interna {
+    display: none;
+  }
+
+  .fundo-svg {
+    inset: -30%;
+    width: 160%;
+    height: 160%;
+  }
+}
 /* Flutuação quase imperceptível das etiquetas sobre o mockup. Cada uma
    recebe um atraso próprio, para não subirem em bloco. */
 @keyframes flutua {
