@@ -2,6 +2,15 @@
 
 @custom-variant dark (&:where(.dark, .dark *));
 
+/* Intensidade da borda acesa dos cards. Declarada com @property para o
+   navegador saber interpolá-la: sem isso a mudança no hover seria seca,
+   já que gradiente não transiciona sozinho. */
+@property --brilho-borda {
+  syntax: "<percentage>";
+  inherits: false;
+  initial-value: 52%;
+}
+
 /* ---------------------------------------------------------------
    Design system inspirado na referência Ardentis (DeFi dashboard).
    Paleta original do projeto: FCFCFC / 030303 / 112B33 / 56D7FD / B5B5B5.
@@ -175,17 +184,32 @@
     background: var(--panel);
   }
 
-  /* Card de conteúdo. A distinção vem da borda e do fundo, não de um
-     contorno em gradiente aceso. */
+  /* Card de conteúdo com a borda acesa da referência: o contorno recebe
+     a cor da marca no canto superior e vai cedendo até a base, o que
+     desenha o card sem precisar de sombra ou fundo diferente. */
   .edge-glow {
-    border: 1px solid var(--border);
+    border: 1px solid transparent;
     border-radius: var(--r-card);
-    background: var(--panel);
-    transition: border-color 0.25s ease;
+    background:
+      linear-gradient(var(--panel), var(--panel)) padding-box,
+      linear-gradient(
+          155deg,
+          color-mix(in srgb, var(--brand) var(--brilho-borda), transparent) 0%,
+          var(--border-forte) 30%,
+          var(--border) 62%,
+          color-mix(
+              in srgb,
+              var(--brand) calc(var(--brilho-borda) / 2.2),
+              transparent
+            )
+            100%
+        )
+        border-box;
+    transition: --brilho-borda 0.35s ease;
   }
 
   .edge-glow:hover {
-    border-color: var(--border-forte);
+    --brilho-borda: 78%;
   }
 
   /* Grão sutil, como nos painéis da referência */
