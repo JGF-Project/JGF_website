@@ -6,8 +6,8 @@ export const ptBR: SiteContent = {
 
   nav: {
     items: [
+      { label: "Início", href: "#inicio" },
       { label: "Serviços", href: "#servicos" },
-      { label: "Processo", href: "#processo" },
       { label: "Projetos", href: "#projetos" },
       { label: "Tecnologias", href: "#tecnologias" },
       { label: "Equipe", href: "#equipe" },

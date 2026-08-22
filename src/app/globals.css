@@ -31,10 +31,20 @@
   --glow-b: rgba(100, 85, 216, 0.2);
   --card: rgba(255, 255, 255, 0.8);
 
-  /* Cantos contidos e com escala definida, em vez de tudo virar pílula. */
-  --r-card: 0.5rem;
-  --r-panel: 0.75rem;
-  --r-min: 0.25rem;
+  /* Cantos com escala definida. Pílula só onde é controle de navegação. */
+  --r-card: 0.75rem;
+  --r-panel: 1rem;
+  --r-min: 0.375rem;
+  --r-pill: 999px;
+
+  /* Profundidade com função: separar o que flutua do que está no fundo. */
+  --sombra-flutuante: 0 10px 30px -18px rgba(3, 3, 3, 0.35);
+  --sombra-elevada: 0 24px 60px -32px rgba(3, 3, 3, 0.4);
+
+  /* Luz de ambiente do hero. Baixíssima opacidade: percebe-se a
+     profundidade, não o gradiente. */
+  --ambiente-a: rgba(11, 127, 158, 0.09);
+  --ambiente-b: rgba(100, 85, 216, 0.07);
 }
 
 .dark {
@@ -57,6 +67,12 @@
   --glow-a: rgba(86, 215, 253, 0.22);
   --glow-b: rgba(139, 124, 255, 0.18);
   --card: rgba(252, 252, 252, 0.028);
+
+  --sombra-flutuante: 0 10px 30px -18px rgba(0, 0, 0, 0.8);
+  --sombra-elevada: 0 24px 60px -30px rgba(0, 0, 0, 0.9);
+
+  --ambiente-a: rgba(86, 215, 253, 0.1);
+  --ambiente-b: rgba(139, 124, 255, 0.08);
 }
 
 @theme inline {
@@ -77,6 +93,7 @@
   --radius-card: var(--r-card);
   --radius-panel: var(--r-panel);
   --radius-min: var(--r-min);
+  --radius-pill: var(--r-pill);
 
   --font-sans: var(--font-jakarta);
   --font-mono: var(--font-mono-code);
@@ -210,6 +227,95 @@
   .icon-chip-roxo {
     color: var(--accent);
   }
+
+  /* Barra flutuante. O desfoque existe porque ela passa por cima de
+     conteúdo em movimento: sem ele o texto embaixo atravessa a barra. */
+  .nav-float {
+    background: color-mix(in srgb, var(--panel) 72%, transparent);
+    backdrop-filter: blur(16px) saturate(140%);
+    border: 1px solid var(--border);
+    border-radius: var(--r-pill);
+    box-shadow: var(--sombra-flutuante);
+    transition:
+      background 0.35s ease,
+      box-shadow 0.35s ease,
+      border-color 0.35s ease;
+  }
+
+  /* Ao rolar, a barra se descola mais do fundo. */
+  .nav-float[data-rolado="true"] {
+    background: color-mix(in srgb, var(--panel) 90%, transparent);
+    border-color: var(--border-forte);
+    box-shadow: var(--sombra-elevada);
+  }
+
+  /* Item de navegação em pílula, com o ativo marcado por preenchimento. */
+  .nav-item {
+    position: relative;
+    border-radius: var(--r-pill);
+    padding: 0.5rem 0.9rem;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    color: var(--muted);
+    transition:
+      color 0.22s ease,
+      background-color 0.22s ease;
+  }
+
+  .nav-item:hover {
+    color: var(--foreground);
+    background: color-mix(in srgb, var(--foreground) 6%, transparent);
+  }
+
+  .nav-item[data-ativo="true"] {
+    color: var(--foreground);
+    background: color-mix(in srgb, var(--foreground) 9%, transparent);
+  }
+
+  /* Luz de ambiente: dá profundidade ao fundo sem virar gradiente óbvio. */
+  .ambiente::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background:
+      radial-gradient(
+        55% 45% at 12% 8%,
+        var(--ambiente-a) 0%,
+        transparent 70%
+      ),
+      radial-gradient(
+        45% 40% at 88% 22%,
+        var(--ambiente-b) 0%,
+        transparent 70%
+      );
+  }
+
+  /* Moldura de janela de navegador, para emoldurar as telas dos projetos */
+  .janela {
+    border-radius: var(--r-panel);
+    border: 1px solid var(--border);
+    background: var(--panel);
+    box-shadow: var(--sombra-elevada);
+    overflow: hidden;
+  }
+
+  /* Etiqueta que paira sobre o mockup */
+  .badge-flutuante {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    border-radius: var(--r-pill);
+    border: 1px solid var(--border);
+    background: color-mix(in srgb, var(--panel) 88%, transparent);
+    backdrop-filter: blur(10px);
+    box-shadow: var(--sombra-flutuante);
+    padding: 0.45rem 0.8rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    white-space: nowrap;
+  }
 }
 
 /* Revelação ao rolar */
@@ -246,6 +352,23 @@
 article[id^="projeto-"]:target {
   border-color: color-mix(in srgb, var(--brand) 55%, transparent);
   animation: destaque-projeto 2.4s ease-out;
+}
+
+/* Flutuação quase imperceptível das etiquetas sobre o mockup. Cada uma
+   recebe um atraso próprio, para não subirem em bloco. */
+@keyframes flutua {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-7px);
+  }
+}
+
+.flutua {
+  animation: flutua 7s ease-in-out infinite;
+  animation-delay: var(--flutua-atraso, 0s);
 }
 
 @keyframes float-slow {
@@ -289,7 +412,8 @@ article[id^="projeto-"]:target {
   }
 
   .animate-float-slow,
-  .animate-esteira {
+  .animate-esteira,
+  .flutua {
     animation: none;
   }
 }
