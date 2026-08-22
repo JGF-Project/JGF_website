@@ -16,7 +16,7 @@ export function ThemeToggle({ className = "" }: { className?: string }) {
       onClick={() => setTheme(resolvedTheme === "dark" ? "light" : "dark")}
       aria-label="Alternar entre tema claro e escuro"
       title="Alternar tema"
-      className={`grid h-10 w-10 place-items-center rounded-full border border-border bg-surface/60 text-foreground transition-colors hover:border-brand hover:text-brand ${className}`}
+      className={`grid h-10 w-10 place-items-center rounded-card border border-border bg-surface text-foreground transition-colors hover:border-brand hover:text-brand ${className}`}
     >
       <SunIcon className="hidden h-[18px] w-[18px] dark:block" />
       <MoonIcon className="h-[18px] w-[18px] dark:hidden" />

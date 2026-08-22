@@ -256,7 +256,7 @@ export function TechCarousel({ items }: { items: TechItem[] }) {
               aria-current={i === ativo}
               className={`h-1.5 rounded-full transition-all duration-400 ${
                 i === ativo
-                  ? "w-5 bg-gradient-to-r from-brand to-accent"
+                  ? "w-5 bg-brand"
                   : "w-1.5 bg-border-forte hover:bg-muted"
               }`}
             />
@@ -305,7 +305,7 @@ function TechCard({
       className={`edge-glow absolute top-1/2 left-1/2 w-[min(86vw,380px)] cursor-pointer overflow-hidden rounded-card text-left transition-[height,transform,opacity,box-shadow,border-color] duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] ${
         estaAberto ? "h-[430px]" : "h-[240px]"
       } ${
-        estaAberto || ehAtivo ? "shadow-[0_28px_70px_-24px_var(--glow-a)]" : ""
+        estaAberto || ehAtivo ? "border-border-forte" : ""
       }`}
       style={estilo}
     >
@@ -343,7 +343,7 @@ function TechCard({
         <span className="mt-4 block text-2xl font-semibold">{item.name}</span>
 
         {ehBanco && (
-          <span className="mt-2 inline-flex w-fit items-center gap-1.5 rounded-full border border-accent/40 bg-accent/10 px-2.5 py-1 text-[0.7rem] font-semibold text-accent">
+          <span className="mt-2 inline-flex w-fit items-center gap-1.5 rounded-min border border-accent/40 px-2.5 py-1 text-[0.7rem] font-semibold text-accent">
             Desenvolvimento + Banco de Dados
           </span>
         )}
@@ -383,7 +383,7 @@ function Seta({
       type="button"
       onClick={onClick}
       aria-label={ehEsquerda ? "Tecnologia anterior" : "Próxima tecnologia"}
-      className={`glass absolute top-1/2 z-40 grid h-10 w-10 -translate-y-1/2 place-items-center !rounded-full text-muted transition-colors hover:border-brand hover:text-brand sm:h-11 sm:w-11 ${
+      className={`glass absolute top-1/2 z-40 grid h-10 w-10 -translate-y-1/2 place-items-center text-muted transition-colors hover:border-brand hover:text-brand sm:h-11 sm:w-11 ${
         ehEsquerda ? "left-0 sm:left-2" : "right-0 sm:right-2"
       }`}
     >

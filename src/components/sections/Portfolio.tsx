@@ -2,7 +2,7 @@ import Image from "next/image";
 import { Container } from "@/components/ui/Container";
 import { Reveal } from "@/components/ui/Reveal";
 import { SectionHeading } from "@/components/ui/SectionHeading";
-import { CheckIcon, ExternalIcon } from "@/components/ui/icons";
+import { ExternalIcon } from "@/components/ui/icons";
 import { content } from "@/content";
 import type { Project } from "@/content/types";
 
@@ -90,11 +90,13 @@ function ProjectCard({
             <h4 className="text-xs font-semibold tracking-widest text-muted uppercase">
               {portfolio.featuresLabel}
             </h4>
-            <ul className="mt-3 grid gap-2 sm:grid-cols-2">
+            <ul className="mt-3 grid gap-x-6 gap-y-2 sm:grid-cols-2">
               {project.features.map((feature) => (
-                <li key={feature} className="flex items-start gap-2 text-sm">
-                  <CheckIcon className="mt-0.5 h-4 w-4 shrink-0 text-brand" />
-                  <span className="text-muted">{feature}</span>
+                <li
+                  key={feature}
+                  className="border-l border-border pl-3 text-sm text-muted"
+                >
+                  {feature}
                 </li>
               ))}
             </ul>
@@ -122,13 +124,13 @@ function ProjectCard({
               href={project.href}
               target="_blank"
               rel="noopener noreferrer"
-              className="group inline-flex items-center gap-2 rounded-full bg-brand px-7 py-3.5 text-sm font-semibold text-background shadow-[0_16px_40px_-12px_var(--glow-a)] transition-transform hover:-translate-y-0.5"
+              className="group inline-flex items-center gap-2 rounded-card bg-brand px-7 py-3.5 text-sm font-semibold text-background transition-colors hover:bg-brand-vivo"
             >
               {portfolio.viewProject}
-              <ExternalIcon className="h-4 w-4 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+              <ExternalIcon className="h-4 w-4" />
             </a>
           ) : (
-            <span className="inline-flex items-center gap-2 rounded-full border border-dashed border-border-forte px-7 py-3.5 text-sm font-semibold text-muted">
+            <span className="inline-flex items-center gap-2 rounded-card border border-border-forte px-7 py-3.5 text-sm font-semibold text-muted">
               {portfolio.comingSoon}
             </span>
           )}

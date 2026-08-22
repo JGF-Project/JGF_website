@@ -36,7 +36,7 @@ export function Header() {
     <header
       className={`fixed inset-x-0 top-0 z-50 transition-all duration-300 ${
         scrolled || open
-          ? "border-b border-border bg-background/80 backdrop-blur-xl"
+          ? "border-b border-border bg-background"
           : "border-b border-transparent"
       }`}
     >
@@ -70,7 +70,7 @@ export function Header() {
 
             <a
               href="#contato"
-              className="hidden rounded-full bg-brand px-5 py-2.5 text-sm font-semibold text-background shadow-[0_12px_30px_-12px_var(--glow-a)] transition-transform hover:-translate-y-0.5 sm:inline-flex"
+              className="hidden rounded-card bg-brand px-5 py-2.5 text-sm font-semibold text-background transition-colors hover:bg-brand-vivo sm:inline-flex"
             >
               {nav.cta}
             </a>
@@ -81,7 +81,7 @@ export function Header() {
               aria-expanded={open}
               aria-controls="menu-mobile"
               aria-label={open ? "Fechar menu" : "Abrir menu"}
-              className="grid h-10 w-10 place-items-center rounded-full border border-border text-foreground lg:hidden"
+              className="grid h-10 w-10 place-items-center rounded-card border border-border text-foreground lg:hidden"
             >
               <svg
                 viewBox="0 0 24 24"
@@ -107,7 +107,7 @@ export function Header() {
       <div
         id="menu-mobile"
         hidden={!open}
-        className="border-t border-border bg-background/95 backdrop-blur-xl lg:hidden"
+        className="border-t border-border bg-background lg:hidden"
       >
         <Container>
           <nav className="flex flex-col py-4" aria-label="Navegação (celular)">
@@ -124,7 +124,7 @@ export function Header() {
             <a
               href="#contato"
               onClick={() => setOpen(false)}
-              className="mt-4 rounded-full bg-brand px-5 py-3 text-center text-sm font-semibold text-background"
+              className="mt-4 rounded-card bg-brand px-5 py-3 text-center text-sm font-semibold text-background"
             >
               {nav.cta}
             </a>

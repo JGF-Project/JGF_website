@@ -32,26 +32,8 @@ export function Contact() {
       <Container>
         <Reveal>
           <div className="panel noise px-6 py-14 sm:px-12 sm:py-20">
-            {/* brilhos de fundo */}
-            <div
-              aria-hidden
-              className="pointer-events-none absolute inset-0"
-            >
-              <div
-                className="absolute -top-24 left-1/2 h-80 w-80 -translate-x-1/2 rounded-full blur-[110px]"
-                style={{ background: "var(--glow-a)" }}
-              />
-              <div
-                className="absolute -right-20 -bottom-24 h-72 w-72 rounded-full blur-[110px]"
-                style={{ background: "var(--glow-b)" }}
-              />
-            </div>
-
             <div className="relative flex flex-col items-center text-center">
-              <span className="pill text-muted">
-                <span className="h-1.5 w-1.5 rounded-full bg-brand" />
-                {contact.eyebrow}
-              </span>
+              <span className="pill">{contact.eyebrow}</span>
 
               <h2 className="mt-6 max-w-2xl text-3xl font-semibold text-balance sm:text-5xl sm:leading-[1.08]">
                 {contact.title}
@@ -66,11 +48,11 @@ export function Contact() {
                   href={`mailto:${site.email}?subject=${encodeURIComponent(
                     "Quero um orçamento com a JGF Company",
                   )}`}
-                  className="group inline-flex items-center justify-center gap-2.5 rounded-full bg-brand px-7 py-4 text-sm font-semibold text-background shadow-[0_16px_40px_-12px_var(--glow-a)] transition-transform hover:-translate-y-0.5"
+                  className="group inline-flex items-center justify-center gap-2.5 rounded-card bg-brand px-7 py-4 text-sm font-semibold text-background transition-colors hover:bg-brand-vivo"
                 >
                   <MailIcon className="h-[18px] w-[18px]" />
                   {contact.emailCta}
-                  <ArrowRightIcon className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+                  <ArrowRightIcon className="h-4 w-4" />
                 </a>
 
                 <button

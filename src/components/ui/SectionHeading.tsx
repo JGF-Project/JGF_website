@@ -19,11 +19,7 @@ export function SectionHeading({
         isCenter ? "items-center text-center" : "items-start text-left"
       }`}
     >
-      {/* Rótulo em pílula, assinatura da referência */}
-      <span className="pill text-foreground">
-        <span className="h-1.5 w-1.5 rounded-full bg-brand" />
-        {eyebrow}
-      </span>
+      <span className="pill">{eyebrow}</span>
 
       <h2 className="text-3xl font-semibold text-balance sm:text-4xl md:text-[2.75rem] md:leading-[1.08]">
         {title}

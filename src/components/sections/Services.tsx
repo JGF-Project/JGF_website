@@ -1,7 +1,7 @@
 import { Container } from "@/components/ui/Container";
 import { Reveal } from "@/components/ui/Reveal";
 import { SectionHeading } from "@/components/ui/SectionHeading";
-import { CheckIcon, serviceIcons, GlobeIcon } from "@/components/ui/icons";
+import { serviceIcons, GlobeIcon } from "@/components/ui/icons";
 import { content } from "@/content";
 
 export function Services() {
@@ -25,13 +25,7 @@ export function Services() {
               <Reveal key={service.id} delay={i * 90}>
                 {/* Card no estilo "Capital Efficiency": borda que acende,
                     chip de ícone e canto bem arredondado */}
-                <article className="edge-glow group relative h-full overflow-hidden rounded-card p-7 transition-transform duration-300 hover:-translate-y-1 sm:p-8">
-                  <div
-                    aria-hidden
-                    className="pointer-events-none absolute -top-28 -right-28 h-56 w-56 rounded-full opacity-0 blur-3xl transition-opacity duration-500 group-hover:opacity-100"
-                    style={{ background: "var(--glow-a)" }}
-                  />
-
+                <article className="edge-glow relative h-full overflow-hidden rounded-card p-7 sm:p-8">
                   <div className="icon-chip relative h-12 w-12">
                     <Icon className="h-[22px] w-[22px]" />
                   </div>
@@ -43,10 +37,11 @@ export function Services() {
                     {service.description}
                   </p>
 
-                  <ul className="relative mt-6 flex flex-wrap gap-2">
+                  {/* Sem sequência de ✓: a lista respira com espaçamento e
+                      um traço fino de coluna, que já separa cada item. */}
+                  <ul className="relative mt-6 space-y-2 border-l border-border pl-4">
                     {service.bullets.map((bullet) => (
-                      <li key={bullet} className="tag">
-                        <CheckIcon className="mr-1.5 h-3 w-3 shrink-0 text-brand" />
+                      <li key={bullet} className="text-sm text-muted">
                         {bullet}
                       </li>
                     ))}

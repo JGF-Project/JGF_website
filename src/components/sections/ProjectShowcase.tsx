@@ -207,7 +207,7 @@ export function ProjectShowcase() {
             <a
               href={atual.ancora}
               onClick={aoClicarNoProjeto}
-              className="pointer-events-auto inline-flex w-fit shrink-0 items-center rounded-full bg-white px-6 py-3 text-sm font-semibold text-black transition-transform hover:-translate-y-0.5"
+              className="pointer-events-auto inline-flex w-fit shrink-0 items-center rounded-card bg-white px-6 py-3 text-sm font-semibold text-black transition-colors hover:bg-white/85"
             >
               {portfolio.discoverProject}
             </a>
@@ -286,7 +286,7 @@ function Seta({
       type="button"
       onClick={onClick}
       aria-label={ehEsquerda ? "Tela anterior" : "Próxima tela"}
-      className={`absolute top-1/2 z-30 grid h-11 w-11 -translate-y-1/2 place-items-center rounded-full border border-white/25 bg-black/30 text-white backdrop-blur-sm transition-colors hover:bg-black/50 sm:h-12 sm:w-12 ${
+      className={`absolute top-1/2 z-30 grid h-11 w-11 -translate-y-1/2 place-items-center rounded-card border border-white/25 bg-black/55 text-white transition-colors hover:bg-black/75 sm:h-12 sm:w-12 ${
         ehEsquerda ? "left-4 sm:left-6" : "right-4 sm:right-6"
       }`}
     >

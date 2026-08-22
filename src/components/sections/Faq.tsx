@@ -26,7 +26,7 @@ export function Faq() {
               <details className="edge-glow group rounded-card">
                 <summary className="flex cursor-pointer list-none items-center justify-between gap-4 px-6 py-5 text-left text-base font-medium transition-colors hover:text-brand [&::-webkit-details-marker]:hidden">
                   {item.question}
-                  <span className="grid h-8 w-8 shrink-0 place-items-center rounded-full border border-border text-muted transition-transform duration-300 group-open:rotate-45 group-open:border-brand group-open:text-brand">
+                  <span className="grid h-8 w-8 shrink-0 place-items-center rounded-min border border-border text-muted transition-transform duration-300 group-open:rotate-45 group-open:border-brand group-open:text-brand">
                     <PlusIcon />
                   </span>
                 </summary>

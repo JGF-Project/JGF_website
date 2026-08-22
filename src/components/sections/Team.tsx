@@ -47,7 +47,7 @@ export function Team() {
 
 function MemberCard({ member }: { member: TeamMember }) {
   return (
-    <article className="edge-glow group flex h-full flex-col overflow-hidden rounded-card transition-transform duration-300 hover:-translate-y-1">
+    <article className="edge-glow group flex h-full flex-col overflow-hidden rounded-card">
       <div className="relative aspect-[4/5] w-full overflow-hidden bg-surface-2">
         {member.photo ? (
           <Image
@@ -55,16 +55,12 @@ function MemberCard({ member }: { member: TeamMember }) {
             alt={`Foto de ${member.name}, ${member.role} da JGF Company`}
             fill
             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-            className="object-cover object-center transition-transform duration-500 group-hover:scale-[1.03]"
+            className="object-cover object-center"
           />
         ) : (
           <PhotoPlaceholder initials={member.initials} name={member.name} />
         )}
 
-        <div
-          aria-hidden
-          className="pointer-events-none absolute inset-x-0 bottom-0 h-20 bg-gradient-to-t from-black/25 to-transparent"
-        />
       </div>
 
       <div className="flex flex-1 flex-col gap-2 p-6">
@@ -110,7 +106,7 @@ function PhotoPlaceholder({
     <div className="absolute inset-0 grid place-items-center">
       <div className="flex flex-col items-center gap-3">
         <div
-          className="icon-chip h-24 w-24 rounded-full text-2xl font-semibold"
+          className="icon-chip h-24 w-24 text-2xl font-semibold"
           aria-hidden
         >
           {initials}
