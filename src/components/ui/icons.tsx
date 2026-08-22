@@ -120,11 +120,102 @@ export function ChartIcon({ className = "h-5 w-5" }: IconProps) {
   );
 }
 
+/* ---------------------------------------------------------------
+   Ícones dos serviços, desenhados a partir das artes enviadas pela
+   equipe. São preenchidos (não de traço) e simplificados de propósito:
+   dentro do chip eles aparecem a 24px, e detalhe fino vira borrão.
+   --------------------------------------------------------------- */
+
+/** Reunião de apresentação: base do ícone de Sites institucionais. */
+export function ReuniaoIcon({ className = "h-5 w-5" }: IconProps) {
+  return (
+    <svg viewBox="0 0 24 24" fill="currentColor" className={className} aria-hidden>
+      {/* Quem apresenta: cabeça, tronco e o braço levantado */}
+      <circle cx="12" cy="3.5" r="2.3" />
+      <path d="M8.7 12.8V9.3a3.3 3.3 0 0 1 6.6 0v3.5Z" />
+      <path d="M9 9.9 6.6 7.6a1.35 1.35 0 0 0-1.9 1.9l2.8 2.7 1.5-2.3Z" />
+
+      {/* Quem assiste, nas laterais */}
+      <circle cx="4.1" cy="9.4" r="1.75" />
+      <circle cx="19.9" cy="9.4" r="1.75" />
+
+      {/* Mesa */}
+      <path d="M6.7 13.6h10.6l4.5 5.6H2.2Z" />
+      <path d="M2 20.1h20v1.4H2Z" />
+
+      {/* Quem está de costas, em primeiro plano */}
+      <circle cx="12" cy="16.6" r="2.2" />
+      <path d="M12 19.3a3.6 3.6 0 0 1 3.6 3.6H8.4A3.6 3.6 0 0 1 12 19.3Z" />
+    </svg>
+  );
+}
+
+/** Página de navegador com faixa, texto e cards: base de Landing pages. */
+export function PaginaIcon({ className = "h-5 w-5" }: IconProps) {
+  return (
+    <svg viewBox="0 0 24 24" fill="currentColor" className={className} aria-hidden>
+      {/* Janela e a barra do topo com os três pontos */}
+      <path d="M4 3.2h16a1.6 1.6 0 0 1 1.6 1.6v13.4A1.6 1.6 0 0 1 20 19.8H4a1.6 1.6 0 0 1-1.6-1.6V4.8A1.6 1.6 0 0 1 4 3.2Zm0 1.5a.3.3 0 0 0-.3.3v1.7h16.6V5a.3.3 0 0 0-.3-.3Z" />
+      <circle cx="5.4" cy="5.8" r=".62" />
+      <circle cx="7.5" cy="5.8" r=".62" />
+      <circle cx="9.6" cy="5.8" r=".62" />
+
+      {/* Faixa de destaque no topo do conteúdo */}
+      <path d="M4.6 8.1h14.8v2.7H4.6Z" />
+
+      {/* Bloco de texto ao lado de uma marca redonda */}
+      <circle cx="6.2" cy="13.2" r="1.35" />
+      <path d="M9.1 12.1h10.3v.95H9.1Zm0 2.1h8.2v.95H9.1Z" />
+
+      {/* Três cards na base */}
+      <path d="M4.6 16.4h4.1v2.3H4.6Zm5.35 0h4.1v2.3h-4.1Zm5.35 0h4.1v2.3h-4.1Z" />
+    </svg>
+  );
+}
+
+/** Calendário com espiral e visto: base de Sistemas de agendamento. */
+export function AgendaIcon({ className = "h-5 w-5" }: IconProps) {
+  return (
+    <svg viewBox="0 0 24 24" fill="currentColor" className={className} aria-hidden>
+      {/* Espiral do topo */}
+      <path d="M6.2 1.6a.95.95 0 0 1 .95.95v2.6a.95.95 0 1 1-1.9 0v-2.6a.95.95 0 0 1 .95-.95Zm3.6 0a.95.95 0 0 1 .95.95v2.6a.95.95 0 1 1-1.9 0v-2.6a.95.95 0 0 1 .95-.95Zm3.6 0a.95.95 0 0 1 .95.95v2.6a.95.95 0 1 1-1.9 0v-2.6a.95.95 0 0 1 .95-.95Zm3.6 0a.95.95 0 0 1 .95.95v2.6a.95.95 0 1 1-1.9 0v-2.6a.95.95 0 0 1 .95-.95Z" />
+
+      {/* Corpo do calendário, com a folha branca vazada */}
+      <path d="M4.4 3.4h15.2a2 2 0 0 1 2 2v13.4a2 2 0 0 1-2 2H4.4a2 2 0 0 1-2-2V5.4a2 2 0 0 1 2-2Zm-.3 6.1v9.1a.6.6 0 0 0 .6.6h14.6a.6.6 0 0 0 .6-.6V9.5Z" />
+
+      {/* Dias */}
+      <path d="M5.9 11.1h2.7v2.1H5.9Zm4.2 0h2.7v2.1h-2.7Zm4.2 0h2.7v2.1h-2.7ZM5.9 14.5h2.7v2.1H5.9Zm4.2 0h2.7v2.1h-2.7Z" />
+
+      {/* Visto de confirmação */}
+      <path d="M15 17.4a.9.9 0 0 1 0-1.3l.9-.9a.9.9 0 0 1 1.3 0l1.1 1.1 3.1-3.2a.9.9 0 0 1 1.3 0l.9.9a.9.9 0 0 1 0 1.3l-4.6 4.7a.9.9 0 0 1-1.3 0Z" />
+    </svg>
+  );
+}
+
+/** Painel com cards de rosca, barras e linha: base de Dashboards. */
+export function PainelIcon({ className = "h-5 w-5" }: IconProps) {
+  return (
+    <svg viewBox="0 0 24 24" fill="currentColor" className={className} aria-hidden>
+      {/* Painel central, com a coluna lateral e as linhas de conteúdo */}
+      <path d="M7.4 4.2h7.9a1.3 1.3 0 0 1 1.3 1.3v13a1.3 1.3 0 0 1-1.3 1.3H7.4a1.3 1.3 0 0 1-1.3-1.3v-13a1.3 1.3 0 0 1 1.3-1.3Zm.4 2.5h1.9v1H7.8Zm0 2.4h1.9v1H7.8Zm0 2.4h1.9v1H7.8Zm3.5-4.8h4v1h-4Zm0 2.4h4v1h-4Zm0 2.4h4v1h-4Zm0 2.4h4v1h-4Z" />
+
+      {/* Card de rosca, no alto à direita */}
+      <path d="M17.6 2.6h4.1a1 1 0 0 1 1 1v4.1a1 1 0 0 1-1 1h-4.1a1 1 0 0 1-1-1V3.6a1 1 0 0 1 1-1Zm2.05 1.7a1.85 1.85 0 1 0 0 3.7 1.85 1.85 0 0 0 0-3.7Zm0 1.25a.6.6 0 1 1 0 1.2.6.6 0 0 1 0-1.2Z" />
+
+      {/* Card de barras, embaixo à direita */}
+      <path d="M17.6 12.4h4.1a1 1 0 0 1 1 1v4.1a1 1 0 0 1-1 1h-4.1a1 1 0 0 1-1-1v-4.1a1 1 0 0 1 1-1Zm.55 3.05h.85v2.05h-.85Zm1.5-1.5h.85v3.55h-.85Zm1.5 1h.85v2.55h-.85Z" />
+
+      {/* Card de linha, à esquerda */}
+      <path d="M1.3 10.9h4.1a1 1 0 0 1 1 1V16a1 1 0 0 1-1 1H1.3a1 1 0 0 1-1-1v-4.1a1 1 0 0 1 1-1Zm.5 4.2.75-1.4 1 .75 1.05-1.75.7.42-1.4 2.35-1-.75-.5.95Z" />
+    </svg>
+  );
+}
+
 export const serviceIcons = {
-  sites: GlobeIcon,
-  landing: RocketIcon,
-  agendamento: CalendarIcon,
-  dashboards: ChartIcon,
+  sites: ReuniaoIcon,
+  landing: PaginaIcon,
+  agendamento: AgendaIcon,
+  dashboards: PainelIcon,
 } as const;
 
 /* Ícones do carrossel de tecnologias, por tipo */
