@@ -12,13 +12,6 @@ import { content } from "@/content";
 /** Ícone de cada benefício, na ordem em que aparecem no conteúdo. */
 const ICONES_BENEFICIO = [CheckIcon, MobileIcon, GlobeIcon] as const;
 
-/** Etiquetas que pairam ao lado do carrossel, cada uma no seu ritmo. */
-const BADGES = [
-  { texto: "Projeto publicado", posicao: "top-6 -right-3 lg:-right-8", atraso: "0s" },
-  { texto: "100% responsivo", posicao: "top-1/2 -right-2 lg:-right-6", atraso: "1.4s" },
-  { texto: "Sistema no ar", posicao: "bottom-8 -right-3 lg:-right-9", atraso: "2.6s" },
-] as const;
-
 export function Hero() {
   const { hero } = content;
 
@@ -44,20 +37,8 @@ export function Hero() {
 
         {/* 2. Carrossel dos projetos, logo abaixo do título */}
         <Reveal delay={160}>
-          <div className="relative mt-12 sm:mt-14">
+          <div className="mt-12 sm:mt-14">
             <ProjectShowcase variante="contido" />
-
-            {BADGES.map((badge) => (
-              <span
-                key={badge.texto}
-                aria-hidden
-                className={`badge-flutuante flutua absolute ${badge.posicao} hidden lg:inline-flex`}
-                style={{ ["--flutua-atraso" as string]: badge.atraso }}
-              >
-                <span className="h-1.5 w-1.5 rounded-pill bg-brand" />
-                {badge.texto}
-              </span>
-            ))}
           </div>
         </Reveal>
 
