@@ -102,6 +102,15 @@ export function CalendarIcon({ className = "h-5 w-5" }: IconProps) {
   );
 }
 
+export function MobileIcon({ className = "h-5 w-5" }: IconProps) {
+  return (
+    <svg {...base} className={className}>
+      <rect x="6.5" y="2.5" width="11" height="19" rx="2.5" />
+      <path d="M10.5 5.5h3" />
+    </svg>
+  );
+}
+
 export function ChartIcon({ className = "h-5 w-5" }: IconProps) {
   return (
     <svg {...base} className={className}>

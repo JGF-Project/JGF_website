@@ -22,8 +22,17 @@ type Quadro = {
   src: string | null;
 };
 
-export function ProjectShowcase() {
+/**
+ * `full` ocupa a viewport de ponta a ponta (usado na seção Projetos).
+ * `contido` fica emoldurado dentro do conteúdo (usado no hero).
+ */
+export function ProjectShowcase({
+  variante = "full",
+}: {
+  variante?: "full" | "contido";
+}) {
   const { portfolio } = content;
+  const ehContido = variante === "contido";
 
   const quadros: Quadro[] = portfolio.projects.flatMap((projeto) =>
     projeto.gallery.map((src, i) => ({
@@ -90,7 +99,11 @@ export function ProjectShowcase() {
     <div
       // Sem moldura, sem canto arredondado e sem limite de largura: o banner
       // ocupa a tela de ponta a ponta, como no carrossel do Itaú.
-      className="relative h-[68vh] max-h-[760px] min-h-[380px] w-full select-none overflow-hidden bg-surface-2"
+      className={`relative w-full select-none overflow-hidden bg-surface-2 ${
+        ehContido
+          ? "aspect-[16/10] rounded-panel border border-border sm:aspect-[2/1]"
+          : "h-[68vh] max-h-[760px] min-h-[380px]"
+      }`}
       style={{ touchAction: "pan-y" }}
       onMouseEnter={() => setPausado(true)}
       onMouseLeave={() => setPausado(false)}

@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Container } from "@/components/ui/Container";
 import { ThemeToggle } from "@/components/theme/ThemeToggle";
 import { Logo } from "./Logo";
 import { content } from "@/content";
@@ -61,10 +60,10 @@ export function Header() {
   }, []);
 
   return (
-    <header className="fixed inset-x-0 top-3 z-50 sm:top-5">
-      <Container>
-        {/* A barra não encosta nas bordas da tela: é um componente que
-            paira sobre a página, com largura própria. */}
+    <header className="fixed inset-x-0 top-3 z-50 sm:top-4">
+      {/* Margens laterais pequenas: a barra ocupa quase toda a tela, mas
+          continua flutuando, sem encostar nas bordas. */}
+      <div className="mx-auto w-full max-w-[1680px] px-3 sm:px-5">
         <div
           className="nav-float flex h-14 items-center gap-2 px-2.5 sm:h-16 sm:px-3"
           data-rolado={rolado}
@@ -78,7 +77,7 @@ export function Header() {
           </a>
 
           <nav
-            className="ml-1 hidden items-center gap-0.5 lg:flex"
+            className="hidden flex-1 items-center justify-center gap-1 lg:flex"
             aria-label="Navegação principal"
           >
             {nav.items.map((item) => (
@@ -162,7 +161,7 @@ export function Header() {
             </a>
           </nav>
         </div>
-      </Container>
+      </div>
     </header>
   );
 }

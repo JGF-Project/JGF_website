@@ -301,9 +301,12 @@
     overflow: hidden;
   }
 
-  /* Etiqueta que paira sobre o mockup */
+  /* Etiqueta que paira sobre o mockup.
+     Sem `display` aqui de propósito: definir inline-flex nesta classe
+     venceria o `hidden` do Tailwind (mesma especificidade, declarada
+     depois) e a etiqueta apareceria no celular. Quem manda no display
+     são as classes utilitárias do componente. */
   .badge-flutuante {
-    display: inline-flex;
     align-items: center;
     gap: 0.45rem;
     border-radius: var(--r-pill);
