@@ -38,6 +38,12 @@ export interface Project {
   screenshot: string | null;
   screenshotAlt: string;
   /**
+   * Imagem larga do projeto, usada no hero de tela cheia. Precisa aguentar
+   * `object-fit: cover` em qualquer proporção, então é uma arte panorâmica,
+   * diferente do mockup quadrado do card.
+   */
+  banner: string;
+  /**
    * Telas do projeto para a vitrine. Cada posição vira um quadro na faixa:
    * com caminho preenchido mostra a imagem, vazia mostra "imagem em breve".
    */

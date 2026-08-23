@@ -597,3 +597,205 @@ article[id^="projeto-"]:target {
     animation: none;
   }
 }
+
+/* ---------------------------------------------------------------
+   HERO de tela cheia.
+
+   A seção é mais alta que a viewport: os primeiros 100svh são o hero e o
+   restante (--corrida) é o trecho de rolagem em que ele encolhe, preso por
+   position: sticky. O cabeçalho vive fora desta seção, então nada aqui o
+   escala, esconde ou desloca.
+   --------------------------------------------------------------- */
+.hero-palco {
+  /* Distância de rolagem durante a qual o hero encolhe. Precisa bater com o
+     animation-range de .hero-quadro, senão o encolhimento termina antes ou
+     depois de o hero se soltar. */
+  --corrida: 58vh;
+  position: relative;
+  height: calc(100svh + var(--corrida));
+}
+
+.hero-fixo {
+  position: sticky;
+  top: 0;
+  height: 100svh;
+}
+
+.hero-quadro {
+  position: relative;
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+  background: #05090f;
+  /* Origem abaixo do centro: ao encolher, a borda de cima desce mais do que a
+     de baixo sobe, e o quadro reduzido para de ficar por trás do cabeçalho.
+     Em porcentagem, isso se ajusta sozinho a qualquer altura de tela. */
+  transform-origin: 50% 78%;
+  /* Estado final do encolhimento, num só lugar para as duas implementações */
+  --escala-final: 0.85;
+  --canto-final: 34px;
+}
+
+@keyframes hero-encolhe {
+  to {
+    scale: var(--escala-final);
+    border-radius: var(--canto-final);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  /* Caminho principal: a animação é ligada à posição real da rolagem, então
+     acompanha o usuário nos dois sentidos e roda sem listener nenhum. */
+  @supports (animation-timeline: scroll()) {
+    .hero-quadro {
+      animation: hero-encolhe linear both;
+      animation-timeline: scroll(root block);
+      animation-range: 0 58vh;
+      will-change: scale, border-radius;
+    }
+  }
+
+  /* Reserva para navegador sem linha do tempo de rolagem: o componente
+     escreve --p de 0 a 1 dentro de um requestAnimationFrame. */
+  .hero-quadro[data-reserva="true"] {
+    --p: 0;
+    scale: calc(1 - (1 - var(--escala-final)) * var(--p));
+    border-radius: calc(var(--canto-final) * var(--p));
+    will-change: scale, border-radius;
+  }
+}
+
+/* Com movimento reduzido o hero não encolhe, e sem encolhimento a corrida de
+   rolagem viraria um vão vazio: a seção volta a ter exatamente uma tela. */
+@media (prefers-reduced-motion: reduce) {
+  .hero-palco {
+    height: 100svh;
+  }
+
+  .hero-fixo {
+    position: relative;
+  }
+}
+
+/* --- Carrossel automático das telas dos projetos --- */
+.hero-telas {
+  position: absolute;
+  inset: 0;
+}
+
+.hero-tela {
+  position: absolute;
+  inset: 0;
+  margin: 0;
+  opacity: 0;
+}
+
+.hero-imagem {
+  object-fit: cover;
+  object-position: center;
+}
+
+/* Cada tela entra, fica em cena e sai enquanto a seguinte entra. As faixas se
+   sobrepõem de propósito: é isso que faz o crossfade em vez do corte seco. */
+@keyframes hero-troca {
+  0% {
+    opacity: 0;
+  }
+  5% {
+    opacity: 1;
+  }
+  25% {
+    opacity: 1;
+  }
+  30% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+/* Ken Burns discreto: a tela cresce 3,5 por cento enquanto está visível e
+   volta ao tamanho original já fora de cena, onde o salto não aparece. */
+@keyframes hero-respira {
+  0% {
+    scale: 1;
+  }
+  30% {
+    scale: 1.035;
+  }
+  30.01% {
+    scale: 1;
+  }
+  100% {
+    scale: 1;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .hero-tela {
+    animation: hero-troca var(--ciclo) linear var(--atraso) infinite;
+  }
+
+  .hero-tela .hero-imagem {
+    animation: hero-respira var(--ciclo) linear var(--atraso) infinite;
+  }
+}
+
+/* Sem animação, uma tela só — a primeira — em vez de nenhuma. */
+@media (prefers-reduced-motion: reduce) {
+  .hero-tela:first-child {
+    opacity: 1;
+  }
+}
+
+/* --- Véu e texto --- */
+.hero-veu {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  /* Escurece só onde o texto encosta: base e canto esquerdo. Os dois terços
+     de cima da tela do projeto continuam limpos. */
+  background:
+    linear-gradient(
+      to top,
+      rgba(3, 7, 14, 0.82) 0%,
+      rgba(3, 7, 14, 0.44) 26%,
+      rgba(3, 7, 14, 0) 58%
+    ),
+    linear-gradient(
+      to right,
+      rgba(3, 7, 14, 0.5) 0%,
+      rgba(3, 7, 14, 0) 52%
+    );
+}
+
+.hero-legenda {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  padding: clamp(1.5rem, 4.5vw, 4.5rem);
+  /* Branco fixo nos dois temas: as telas dos projetos são escuras sob o véu,
+     e o texto precisa do mesmo contraste no claro e no escuro. */
+  color: #ffffff;
+}
+
+.hero-olho {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  line-height: 1;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.72);
+}
+
+.hero-titulo {
+  margin-top: 1rem;
+  font-size: clamp(1.9rem, 5.6vw, 4.75rem);
+  font-weight: 600;
+  line-height: 1.04;
+  letter-spacing: -0.03em;
+  text-wrap: balance;
+  text-shadow: 0 2px 24px rgba(0, 0, 0, 0.35);
+}

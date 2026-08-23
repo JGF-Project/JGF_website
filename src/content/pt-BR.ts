@@ -164,6 +164,7 @@ export const ptBR: SiteContent = {
         screenshot: null,
         screenshotAlt:
           "Tela inicial do site da RR Barbearia com o agendamento online",
+        banner: "/hero/rr-barbearia.jpg",
         gallery: ["/portfolio/rr-barbearia.png"],
         href: "https://rrbarbearia.vercel.app/#inicio",
         status: "live",
@@ -185,6 +186,7 @@ export const ptBR: SiteContent = {
         screenshot: null,
         screenshotAlt:
           "Tela inicial do confirmai mostrando a confirmação de consultas por WhatsApp",
+        banner: "/hero/confirmai.jpg",
         gallery: ["/portfolio/confirmai.png"],
         href: "https://confirmaclinica.vercel.app/",
         status: "live",
@@ -206,6 +208,9 @@ export const ptBR: SiteContent = {
         screenshot: null,
         screenshotAlt:
           "Tela inicial do site da VLM Presentes com brindes corporativos e presentes personalizados",
+        // Único projeto ainda sem arte panorâmica própria: usa o mockup do card
+        // até a equipe enviar uma imagem larga.
+        banner: "/portfolio/vlm-presentes.png",
         gallery: ["/portfolio/vlm-presentes.png"],
         href: "https://vlmpresentes.vercel.app/",
         status: "live",
@@ -227,6 +232,7 @@ export const ptBR: SiteContent = {
         screenshot: null,
         screenshotAlt:
           "Tela inicial do site da Barber Daniel's com o agendamento online",
+        banner: "/hero/barber-daniels.jpg",
         gallery: ["/portfolio/barber-daniels.png"],
         href: "https://barber-daniels.vercel.app/",
         status: "live",
