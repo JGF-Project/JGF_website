@@ -601,16 +601,25 @@ article[id^="projeto-"]:target {
 /* ---------------------------------------------------------------
    HERO de tela cheia.
 
-   A seção é mais alta que a viewport: os primeiros 100svh são o hero e o
-   restante (--corrida) é o trecho de rolagem em que ele encolhe, preso por
-   position: sticky. O cabeçalho vive fora desta seção, então nada aqui o
-   escala, esconde ou desloca.
+   Dois sistemas independentes, e de propósito:
+
+   A) o carrossel é controlado pelo TEMPO, por um setInterval em
+      HeroVisual.tsx que só troca qual figura tem data-ativo. O crossfade em
+      si é transição de CSS.
+
+   B) a redução é controlada pela ROLAGEM. O componente escreve --p, de 0 a
+      1, na própria seção; largura, altura e canto derivam dele por calc().
+      São dimensões de verdade, não scale: o quadro encolhe, não é a imagem
+      que diminui dentro de um container do mesmo tamanho.
+
+   Nenhum dos dois passa por @media nem por @supports. Navegador com
+   animações desligadas no sistema continua vendo o site funcionar.
    --------------------------------------------------------------- */
 .hero-palco {
-  /* Distância de rolagem durante a qual o hero encolhe. Precisa bater com o
-     animation-range de .hero-quadro, senão o encolhimento termina antes ou
-     depois de o hero se soltar. */
-  --corrida: 58vh;
+  /* Distância de rolagem em que o hero encolhe. O componente mede a corrida
+     real no DOM, então mexer aqui não desalinha o cálculo. */
+  --corrida: 80vh;
+  --p: 0;
   position: relative;
   height: calc(100svh + var(--corrida));
 }
@@ -618,66 +627,30 @@ article[id^="projeto-"]:target {
 .hero-fixo {
   position: sticky;
   top: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   height: 100svh;
+  /* Conforme encolhe, o quadro é empurrado para baixo do cabeçalho, que
+     nunca deixa de estar por cima e nunca muda de tamanho. */
+  padding-top: calc(var(--p) * 4svh);
 }
 
 .hero-quadro {
   position: relative;
-  height: 100%;
-  width: 100%;
   overflow: hidden;
+  /* 100% -> 91% de largura, 100svh -> 78svh de altura, canto 0 -> 28px.
+     Tudo amarrado ao mesmo --p, então as três coisas andam juntas. */
+  width: calc(100% - var(--p) * 9%);
+  height: calc(100svh - var(--p) * 22svh);
+  border-radius: calc(var(--p) * 28px);
   background: #05090f;
-  /* Origem abaixo do centro: ao encolher, a borda de cima desce mais do que a
-     de baixo sobe, e o quadro reduzido para de ficar por trás do cabeçalho.
-     Em porcentagem, isso se ajusta sozinho a qualquer altura de tela. */
-  transform-origin: 50% 78%;
-  /* Estado final do encolhimento, num só lugar para as duas implementações */
-  --escala-final: 0.85;
-  --canto-final: 34px;
 }
 
-@keyframes hero-encolhe {
-  to {
-    scale: var(--escala-final);
-    border-radius: var(--canto-final);
-  }
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  /* Caminho principal: a animação é ligada à posição real da rolagem, então
-     acompanha o usuário nos dois sentidos e roda sem listener nenhum. */
-  @supports (animation-timeline: scroll()) {
-    .hero-quadro {
-      animation: hero-encolhe linear both;
-      animation-timeline: scroll(root block);
-      animation-range: 0 58vh;
-      will-change: scale, border-radius;
-    }
-  }
-
-  /* Reserva para navegador sem linha do tempo de rolagem: o componente
-     escreve --p de 0 a 1 dentro de um requestAnimationFrame. */
-  .hero-quadro[data-reserva="true"] {
-    --p: 0;
-    scale: calc(1 - (1 - var(--escala-final)) * var(--p));
-    border-radius: calc(var(--canto-final) * var(--p));
-    will-change: scale, border-radius;
-  }
-}
-
-/* Com movimento reduzido o hero não encolhe, e sem encolhimento a corrida de
-   rolagem viraria um vão vazio: a seção volta a ter exatamente uma tela. */
-@media (prefers-reduced-motion: reduce) {
-  .hero-palco {
-    height: 100svh;
-  }
-
-  .hero-fixo {
-    position: relative;
-  }
-}
-
-/* --- Carrossel automático das telas dos projetos --- */
+/* --- Carrossel: crossfade sem escurecer no meio da troca ---
+   A figura que entra sobe por cima (z-index 2) enquanto a que sai continua
+   opaca por baixo. Se as duas cruzassem opacidade ao mesmo tempo, no meio do
+   caminho apareceria o fundo preto entre elas. */
 .hero-telas {
   position: absolute;
   inset: 0;
@@ -688,64 +661,41 @@ article[id^="projeto-"]:target {
   inset: 0;
   margin: 0;
   opacity: 0;
+  z-index: 0;
+  transition: opacity 1000ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.hero-tela[data-ativo="true"] {
+  opacity: 1;
+  z-index: 2;
+}
+
+.hero-tela[data-anterior="true"] {
+  opacity: 1;
+  z-index: 1;
+  transition: none;
 }
 
 .hero-imagem {
   object-fit: cover;
   object-position: center;
+  scale: 1;
+  transition: scale 4800ms linear;
 }
 
-/* Cada tela entra, fica em cena e sai enquanto a seguinte entra. As faixas se
-   sobrepõem de propósito: é isso que faz o crossfade em vez do corte seco. */
-@keyframes hero-troca {
-  0% {
-    opacity: 0;
-  }
-  5% {
-    opacity: 1;
-  }
-  25% {
-    opacity: 1;
-  }
-  30% {
-    opacity: 0;
-  }
-  100% {
-    opacity: 0;
-  }
+/* Ken Burns discreto: só a figura em cena cresce, e só 2 por cento. */
+.hero-tela[data-ativo="true"] .hero-imagem {
+  scale: 1.02;
 }
 
-/* Ken Burns discreto: a tela cresce 3,5 por cento enquanto está visível e
-   volta ao tamanho original já fora de cena, onde o salto não aparece. */
-@keyframes hero-respira {
-  0% {
-    scale: 1;
-  }
-  30% {
-    scale: 1.035;
-  }
-  30.01% {
-    scale: 1;
-  }
-  100% {
-    scale: 1;
-  }
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .hero-tela {
-    animation: hero-troca var(--ciclo) linear var(--atraso) infinite;
-  }
-
-  .hero-tela .hero-imagem {
-    animation: hero-respira var(--ciclo) linear var(--atraso) infinite;
-  }
-}
-
-/* Sem animação, uma tela só — a primeira — em vez de nenhuma. */
+/* Com movimento reduzido cai o zoom, que é o único movimento autônomo aqui.
+   O crossfade fica: variação de opacidade não carrega direção de movimento.
+   A redução também fica, porque acompanha a rolagem do próprio usuário. */
 @media (prefers-reduced-motion: reduce) {
-  .hero-tela:first-child {
-    opacity: 1;
+  .hero-imagem,
+  .hero-tela[data-ativo="true"] .hero-imagem {
+    scale: 1;
+    transition: none;
   }
 }
 
@@ -763,11 +713,7 @@ article[id^="projeto-"]:target {
       rgba(3, 7, 14, 0.44) 26%,
       rgba(3, 7, 14, 0) 58%
     ),
-    linear-gradient(
-      to right,
-      rgba(3, 7, 14, 0.5) 0%,
-      rgba(3, 7, 14, 0) 52%
-    );
+    linear-gradient(to right, rgba(3, 7, 14, 0.5) 0%, rgba(3, 7, 14, 0) 52%);
 }
 
 .hero-legenda {
@@ -775,8 +721,10 @@ article[id^="projeto-"]:target {
   right: 0;
   bottom: 0;
   left: 0;
-  padding: clamp(1.5rem, 4.5vw, 4.5rem);
-  /* Branco fixo nos dois temas: as telas dos projetos são escuras sob o véu,
+  /* O recuo cede um pouco junto com o quadro, para o texto não parecer solto
+     do canto quando a moldura fica menor. */
+  padding: calc(clamp(1.5rem, 4.5vw, 4.5rem) * (1 - var(--p) * 0.18));
+  /* Branco fixo nos dois temas: as telas dos projetos ficam escuras sob o véu,
      e o texto precisa do mesmo contraste no claro e no escuro. */
   color: #ffffff;
 }
