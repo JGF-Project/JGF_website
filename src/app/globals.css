@@ -640,10 +640,16 @@ article[id^="projeto-"]:target {
    esquerda, abrindo o lado direito para o texto. */
 .hero-quadro {
   position: absolute;
+  /* Diagonal: enquanto estreita, o quadro também desce. Sai de ocupar a tela
+     inteira e termina pequeno, no canto de baixo à esquerda, abrindo o lado
+     direito para o texto. */
   left: calc(var(--p) * 5%);
-  top: calc(var(--p) * 27svh);
+  top: calc(var(--p) * 46svh);
   width: calc(100% - var(--p) * 68%);
-  height: calc(100svh - var(--p) * 54svh);
+  /* Termina em proporção deitada, perto de 3:2. As telas dos projetos são
+     largas, e uma moldura final em pé cortaria mais imagem do que o estado
+     inicial de tela cheia. */
+  height: calc(100svh - var(--p) * 66svh);
   border-radius: calc(var(--p) * 20px);
   overflow: hidden;
   background: #05090f;
@@ -724,10 +730,9 @@ article[id^="projeto-"]:target {
   position: absolute;
   bottom: 0;
   left: 0;
-  /* Largura presa à viewport, não à moldura: assim a frase não é requebrada a
-     cada quadro enquanto o quadro estreita. O excedente é cortado pelo
-     overflow, e a legenda já está sumindo quando isso começa a aparecer. */
-  width: 100vw;
+  /* Acompanha a moldura. Prender a largura à viewport evitaria requebrar o
+     texto, mas cortava o título assim que o quadro estreitava. */
+  width: 100%;
   padding: clamp(1.5rem, 4.5vw, 4.5rem);
   /* Branco fixo nos dois temas: as telas dos projetos ficam escuras sob o véu,
      e o texto precisa do mesmo contraste no claro e no escuro. */
@@ -749,7 +754,8 @@ article[id^="projeto-"]:target {
 
 .hero-titulo {
   margin-top: 1rem;
-  font-size: clamp(1.9rem, 5.6vw, 4.75rem);
+  /* Cede junto com a moldura, senão a frase grande não caberia nela. */
+  font-size: calc(clamp(1.9rem, 5.6vw, 4.75rem) * (1 - var(--p) * 0.45));
   font-weight: 600;
   line-height: 1.04;
   letter-spacing: -0.03em;
@@ -767,10 +773,11 @@ article[id^="projeto-"]:target {
   flex-direction: column;
   justify-content: center;
   opacity: clamp(0, calc((var(--p) - 0.55) / 0.32), 1);
-  /* Entra deslizando da direita. A caixa é montada uma vez, no tamanho final,
-     e só é transladada: o texto nunca é requebrado, e a moldura, que está
-     recuando ao mesmo tempo, nunca fica por baixo dele. */
-  translate: calc((1 - var(--p)) * 52vw) 0;
+  /* Entra deslizando da direita e desce junto com a moldura, para os dois
+     ficarem na mesma faixa. A caixa é montada uma vez, no tamanho final, e só
+     é transladada: o texto nunca é requebrado, e a moldura, que está recuando
+     ao mesmo tempo, nunca fica por baixo dele. */
+  translate: calc((1 - var(--p)) * 52vw) calc(var(--p) * 12svh);
   /* Só recebe clique quando está de fato visível; o atributo é escrito pelo
      mesmo laço que escreve --p, e só quando o estado muda. */
   pointer-events: none;
@@ -789,20 +796,33 @@ article[id^="projeto-"]:target {
 /* Abaixo de lg não há largura para texto ao lado da imagem: o quadro encolhe
    centralizado, com menos intensidade, e o texto vira seção logo abaixo. */
 @media (max-width: 1023px) {
+  /* Mesma diagonal, proporções próprias: a tela estreita não comporta texto ao
+     lado, então o quadro desce mais e termina maior, ocupando bem a faixa de
+     baixo em vez de virar um selo perdido no canto. */
   .hero-quadro {
     left: calc(var(--p) * 6%);
-    /* Recuo maior que a altura do cabeçalho, para a moldura reduzida não
-       terminar por baixo dele. */
-    top: calc(var(--p) * 10svh);
-    width: calc(100% - var(--p) * 12%);
-    /* Encolhe menos: aqui não entra texto ao lado, então uma redução forte só
-       deixaria um vão vazio embaixo. */
-    height: calc(100svh - var(--p) * 26svh);
+    top: calc(var(--p) * 34svh);
+    width: calc(100% - var(--p) * 20%);
+    height: calc(100svh - var(--p) * 52svh);
   }
 
-  /* A legenda não some: ela é o único texto do palco em tela estreita. */
+  /* A legenda não some: ela é o único texto do palco em tela estreita. Por
+     isso o título cede menos aqui — precisa continuar legível até o fim. */
   .hero-legenda {
     opacity: 1;
+  }
+
+  /* No celular a legenda nasce já com a largura que a moldura terá no fim, e o
+     corpo do título não muda. Assim nada é requebrado durante a rolagem — que
+     no desktop custa alguns milissegundos e num aparelho fraco custaria o
+     quadro inteiro — e o texto nunca é cortado, porque nunca sobra da
+     moldura. */
+  .hero-legenda {
+    width: 80vw;
+  }
+
+  .hero-titulo {
+    font-size: clamp(1.9rem, 5.6vw, 4.75rem);
   }
 
   .hero-veu {
