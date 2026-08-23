@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState, type RefObject } from "react";
 import Image from "next/image";
+import { HeroApoio } from "./HeroApoio";
 import { content } from "@/content";
 
 /** Tempo que cada projeto fica em cena antes da próxima troca. */
@@ -102,6 +103,12 @@ export function HeroVisual() {
             </h1>
           </div>
         </div>
+
+        {/* Entra à direita conforme o quadro abre espaço. Abaixo de lg fica em
+            display none e o mesmo conteúdo vira seção, logo depois do hero. */}
+        <div className="hero-texto">
+          <HeroApoio compacto />
+        </div>
       </div>
     </section>
   );
@@ -130,6 +137,7 @@ function useProgressoDeRolagem(ref: RefObject<HTMLElement | null>) {
     let atual = 0;
     let quadro = 0;
     let rodando = false;
+    let avancado = false;
 
     /**
      * A corrida é a distância em que o sticky segura o quadro, medida no DOM
@@ -147,7 +155,9 @@ function useProgressoDeRolagem(ref: RefObject<HTMLElement | null>) {
 
     const passo = () => {
       const alvo = medirAlvo();
-      atual += (alvo - atual) * 0.18;
+      // Aproximação por fração: o valor persegue a posição da rolagem em vez
+      // de saltar para ela, o que tira a aspereza de cada giro da roda.
+      atual += (alvo - atual) * 0.15;
 
       if (Math.abs(alvo - atual) < 0.0004) {
         atual = alvo;
@@ -157,6 +167,14 @@ function useProgressoDeRolagem(ref: RefObject<HTMLElement | null>) {
       }
 
       palco.style.setProperty("--p", atual.toFixed(4));
+
+      // O texto da direita só fica clicável depois de aparecer. Escrito apenas
+      // na virada, não a cada quadro, para não sujar o DOM à toa.
+      const agora = atual > 0.6;
+      if (agora !== avancado) {
+        avancado = agora;
+        palco.dataset.avancado = String(agora);
+      }
     };
 
     const acordar = () => {
@@ -182,6 +200,7 @@ function useProgressoDeRolagem(ref: RefObject<HTMLElement | null>) {
       window.removeEventListener("scroll", acordar);
       window.removeEventListener("resize", acordar);
       palco.style.removeProperty("--p");
+      delete palco.dataset.avancado;
     };
   }, [ref]);
 }

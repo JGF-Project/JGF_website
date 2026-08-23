@@ -601,24 +601,26 @@ article[id^="projeto-"]:target {
 /* ---------------------------------------------------------------
    HERO de tela cheia.
 
-   Dois sistemas independentes, e de propósito:
+   Dois sistemas independentes, de propósito:
 
    A) o carrossel é controlado pelo TEMPO, por um setInterval em
-      HeroVisual.tsx que só troca qual figura tem data-ativo. O crossfade em
-      si é transição de CSS.
+      HeroVisual.tsx que só troca qual figura tem data-ativo. O crossfade é
+      transição de CSS.
 
-   B) a redução é controlada pela ROLAGEM. O componente escreve --p, de 0 a
-      1, na própria seção; largura, altura e canto derivam dele por calc().
-      São dimensões de verdade, não scale: o quadro encolhe, não é a imagem
-      que diminui dentro de um container do mesmo tamanho.
+   B) a redução é controlada pela ROLAGEM. O componente escreve --p, de 0 a 1,
+      na seção; posição, largura, altura e canto do quadro saem dele por
+      calc(). São dimensões de verdade, não scale.
 
-   Nenhum dos dois passa por @media nem por @supports. Navegador com
-   animações desligadas no sistema continua vendo o site funcionar.
+   Custo: o quadro está fora do fluxo, então mudar o tamanho dele não
+   reposiciona nada da página — o recálculo fica preso no próprio quadro, que
+   ainda tem `contain`. A legenda tem largura fixa em viewport, então o texto
+   nunca é requebrado enquanto a moldura estreita, que seria a parte cara.
    --------------------------------------------------------------- */
 .hero-palco {
-  /* Distância de rolagem em que o hero encolhe. O componente mede a corrida
-     real no DOM, então mexer aqui não desalinha o cálculo. */
-  --corrida: 80vh;
+  /* Distância de rolagem em que o hero encolhe. Longa de propósito: é o que
+     faz cada giro da roda mexer pouco e o movimento parecer contínuo. O
+     componente mede a corrida real no DOM, então mexer aqui não desalinha. */
+  --corrida: 120vh;
   --p: 0;
   position: relative;
   height: calc(100svh + var(--corrida));
@@ -627,24 +629,25 @@ article[id^="projeto-"]:target {
 .hero-fixo {
   position: sticky;
   top: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
   height: 100svh;
-  /* Conforme encolhe, o quadro é empurrado para baixo do cabeçalho, que
-     nunca deixa de estar por cima e nunca muda de tamanho. */
-  padding-top: calc(var(--p) * 4svh);
+  /* Segura o texto enquanto ele ainda está fora da tela, à direita. Sem isto
+     ele abriria barra de rolagem horizontal. Overflow no próprio elemento
+     grudento não atrapalha: quem quebra sticky é overflow em ancestral. */
+  overflow: hidden;
 }
 
+/* O quadro sai de ocupar a tela inteira e termina pequeno, encostado à
+   esquerda, abrindo o lado direito para o texto. */
 .hero-quadro {
-  position: relative;
+  position: absolute;
+  left: calc(var(--p) * 5%);
+  top: calc(var(--p) * 27svh);
+  width: calc(100% - var(--p) * 68%);
+  height: calc(100svh - var(--p) * 54svh);
+  border-radius: calc(var(--p) * 20px);
   overflow: hidden;
-  /* 100% -> 91% de largura, 100svh -> 78svh de altura, canto 0 -> 28px.
-     Tudo amarrado ao mesmo --p, então as três coisas andam juntas. */
-  width: calc(100% - var(--p) * 9%);
-  height: calc(100svh - var(--p) * 22svh);
-  border-radius: calc(var(--p) * 28px);
   background: #05090f;
+  contain: layout paint;
 }
 
 /* --- Carrossel: crossfade sem escurecer no meio da troca ---
@@ -699,7 +702,7 @@ article[id^="projeto-"]:target {
   }
 }
 
-/* --- Véu e texto --- */
+/* --- Véu e legenda sobre a imagem --- */
 .hero-veu {
   position: absolute;
   inset: 0;
@@ -714,19 +717,25 @@ article[id^="projeto-"]:target {
       rgba(3, 7, 14, 0) 58%
     ),
     linear-gradient(to right, rgba(3, 7, 14, 0.5) 0%, rgba(3, 7, 14, 0) 52%);
+  opacity: calc(1 - var(--p) * 0.45);
 }
 
 .hero-legenda {
   position: absolute;
-  right: 0;
   bottom: 0;
   left: 0;
-  /* O recuo cede um pouco junto com o quadro, para o texto não parecer solto
-     do canto quando a moldura fica menor. */
-  padding: calc(clamp(1.5rem, 4.5vw, 4.5rem) * (1 - var(--p) * 0.18));
+  /* Largura presa à viewport, não à moldura: assim a frase não é requebrada a
+     cada quadro enquanto o quadro estreita. O excedente é cortado pelo
+     overflow, e a legenda já está sumindo quando isso começa a aparecer. */
+  width: 100vw;
+  padding: clamp(1.5rem, 4.5vw, 4.5rem);
   /* Branco fixo nos dois temas: as telas dos projetos ficam escuras sob o véu,
      e o texto precisa do mesmo contraste no claro e no escuro. */
   color: #ffffff;
+  /* Some cedo: em moldura pequena a frase grande não caberia de forma legível,
+     e o lugar dela passa a ser o bloco da direita. */
+  opacity: clamp(0, calc((0.6 - var(--p)) / 0.42), 1);
+  pointer-events: none;
 }
 
 .hero-olho {
@@ -744,6 +753,59 @@ article[id^="projeto-"]:target {
   font-weight: 600;
   line-height: 1.04;
   letter-spacing: -0.03em;
-  text-wrap: balance;
   text-shadow: 0 2px 24px rgba(0, 0, 0, 0.35);
+}
+
+/* --- Texto que entra à direita, no lugar que o quadro abriu --- */
+.hero-texto {
+  display: none;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 42%;
+  right: 5%;
+  flex-direction: column;
+  justify-content: center;
+  opacity: clamp(0, calc((var(--p) - 0.55) / 0.32), 1);
+  /* Entra deslizando da direita. A caixa é montada uma vez, no tamanho final,
+     e só é transladada: o texto nunca é requebrado, e a moldura, que está
+     recuando ao mesmo tempo, nunca fica por baixo dele. */
+  translate: calc((1 - var(--p)) * 52vw) 0;
+  /* Só recebe clique quando está de fato visível; o atributo é escrito pelo
+     mesmo laço que escreve --p, e só quando o estado muda. */
+  pointer-events: none;
+}
+
+.hero-palco[data-avancado="true"] .hero-texto {
+  pointer-events: auto;
+}
+
+@media (min-width: 1024px) {
+  .hero-texto {
+    display: flex;
+  }
+}
+
+/* Abaixo de lg não há largura para texto ao lado da imagem: o quadro encolhe
+   centralizado, com menos intensidade, e o texto vira seção logo abaixo. */
+@media (max-width: 1023px) {
+  .hero-quadro {
+    left: calc(var(--p) * 6%);
+    /* Recuo maior que a altura do cabeçalho, para a moldura reduzida não
+       terminar por baixo dele. */
+    top: calc(var(--p) * 10svh);
+    width: calc(100% - var(--p) * 12%);
+    /* Encolhe menos: aqui não entra texto ao lado, então uma redução forte só
+       deixaria um vão vazio embaixo. */
+    height: calc(100svh - var(--p) * 26svh);
+  }
+
+  /* A legenda não some: ela é o único texto do palco em tela estreita. */
+  .hero-legenda {
+    opacity: 1;
+  }
+
+  .hero-veu {
+    opacity: 1;
+  }
 }
