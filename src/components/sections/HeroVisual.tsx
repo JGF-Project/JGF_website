@@ -24,8 +24,21 @@ const INTERVALO_MS = 4000;
  */
 export function HeroVisual() {
   const { hero, portfolio } = content;
-  const projetos = portfolio.projects;
-  const total = projetos.length;
+
+  // Só entram no rodízio os projetos que já têm arte panorâmica. Assim que a
+  // VLM Presentes ganhar a dela, ela volta sozinha, sem mexer aqui.
+  const telas = portfolio.projects.flatMap((projeto) =>
+    projeto.banner
+      ? [
+          {
+            id: projeto.id,
+            banner: projeto.banner,
+            alt: `${projeto.name} — ${projeto.category}`,
+          },
+        ]
+      : [],
+  );
+  const total = telas.length;
 
   const [ativo, setAtivo] = useState(0);
   const palcoRef = useRef<HTMLElement>(null);
@@ -57,16 +70,16 @@ export function HeroVisual() {
       <div className="hero-fixo">
         <div className="hero-quadro">
           <div className="hero-telas">
-            {projetos.map((projeto, i) => (
+            {telas.map((tela, i) => (
               <figure
-                key={projeto.id}
+                key={tela.id}
                 className="hero-tela"
                 data-ativo={i === ativo}
                 data-anterior={i === anterior}
               >
                 <Image
-                  src={projeto.banner}
-                  alt={`${projeto.name} — ${projeto.category}`}
+                  src={tela.banner}
+                  alt={tela.alt}
                   fill
                   sizes="100vw"
                   priority={i === 0}

@@ -208,9 +208,10 @@ export const ptBR: SiteContent = {
         screenshot: null,
         screenshotAlt:
           "Tela inicial do site da VLM Presentes com brindes corporativos e presentes personalizados",
-        // Único projeto ainda sem arte panorâmica própria: usa o mockup do card
-        // até a equipe enviar uma imagem larga.
-        banner: "/portfolio/vlm-presentes.png",
+        // Fora do rodízio do hero até a equipe enviar uma arte panorâmica. O
+        // mockup do card não serve: é claro e destoa das outras três telas.
+        // Basta apontar o caminho aqui para o projeto voltar ao carrossel.
+        banner: null,
         gallery: ["/portfolio/vlm-presentes.png"],
         href: "https://vlmpresentes.vercel.app/",
         status: "live",
