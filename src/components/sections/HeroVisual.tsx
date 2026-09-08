@@ -41,30 +41,34 @@ export function HeroVisual() {
   );
   const total = telas.length;
 
-  const [ativo, setAtivo] = useState(0);
+  // Os dois índices andam juntos: a figura que sai continua opaca por baixo
+  // enquanto a que entra aparece. Guardar a anterior de verdade — em vez de
+  // deduzi-la como "a de índice abaixo" — é o que mantém o crossfade correto
+  // quando alguém pula direto para um projeto pelos pontos.
+  const [quadro, setQuadro] = useState({ ativo: 0, anterior: 0 });
+  const { ativo, anterior } = quadro;
   const palcoRef = useRef<HTMLElement>(null);
+
+  const irPara = (i: number) =>
+    setQuadro((q) => (q.ativo === i ? q : { ativo: i, anterior: q.ativo }));
 
   // --- ANIMAÇÃO A: carrossel, pelo tempo ---
   useEffect(() => {
     if (total < 2) return;
 
-    // Atualização por função: o intervalo é criado uma vez só e mesmo assim
-    // nunca lê um índice velho. As dependências são estáveis, então não há
-    // um segundo intervalo nascendo a cada render.
-    const id = setInterval(() => {
-      setAtivo((i) => (i + 1) % total);
+    // Um disparo por vez, reagendado a cada troca. Assim quem usa os pontos
+    // ganha os 4 segundos inteiros na imagem escolhida, em vez de pegar o
+    // resto de um intervalo já correndo. A limpeza cancela o disparo pendente,
+    // então nunca existe mais de um relógio vivo.
+    const id = setTimeout(() => {
+      setQuadro((q) => ({ ativo: (q.ativo + 1) % total, anterior: q.ativo }));
     }, INTERVALO_MS);
 
-    return () => clearInterval(id);
-  }, [total]);
+    return () => clearTimeout(id);
+  }, [ativo, total]);
 
   // --- ANIMAÇÃO B: redução, pela rolagem ---
   useProgressoDeRolagem(palcoRef);
-
-  // A figura que sai continua opaca por baixo enquanto a que entra aparece.
-  // Como o carrossel só avança, a anterior é sempre a de índice imediatamente
-  // abaixo — não precisa virar estado.
-  const anterior = (ativo - 1 + total) % total;
 
   return (
     <section id="inicio" className="hero-palco" ref={palcoRef}>
@@ -83,7 +87,12 @@ export function HeroVisual() {
                   alt={tela.alt}
                   fill
                   sizes="100vw"
+                  // Só a primeira entra no carregamento crítico. As outras têm
+                  // 4 segundos de folga antes de aparecer, tempo de sobra para
+                  // chegarem sem disputar banda com a abertura da página.
                   priority={i === 0}
+                  loading={i === 0 ? undefined : "eager"}
+                  fetchPriority={i === 0 ? "high" : "low"}
                   className="hero-imagem"
                 />
               </figure>
@@ -101,6 +110,27 @@ export function HeroVisual() {
               {/* Quebra proposital a partir do tablet; no celular o texto flui */}
               <br className="hidden sm:block" /> {hero.titleHighlight}
             </h1>
+          </div>
+
+          {/* Indicadores discretos. São botões de verdade: conteúdo que troca
+              sozinho precisa poder ser controlado por quem navega pelo teclado
+              ou quer voltar a uma tela que já passou. */}
+          <div
+            className="hero-pontos"
+            role="group"
+            aria-label="Projetos em destaque"
+          >
+            {telas.map((tela, i) => (
+              <button
+                key={tela.id}
+                type="button"
+                className="hero-ponto"
+                data-ativo={i === ativo}
+                aria-current={i === ativo ? "true" : undefined}
+                aria-label={tela.alt}
+                onClick={() => irPara(i)}
+              />
+            ))}
           </div>
         </div>
 
@@ -136,7 +166,6 @@ function useProgressoDeRolagem(ref: RefObject<HTMLElement | null>) {
 
     let atual = 0;
     let quadro = 0;
-    let rodando = false;
     let avancado = false;
 
     /**
@@ -154,6 +183,8 @@ function useProgressoDeRolagem(ref: RefObject<HTMLElement | null>) {
     };
 
     const passo = () => {
+      quadro = 0;
+
       const alvo = medirAlvo();
       // Aproximação por fração: o valor persegue a posição da rolagem em vez
       // de saltar para ela, o que tira a aspereza de cada giro da roda.
@@ -161,7 +192,6 @@ function useProgressoDeRolagem(ref: RefObject<HTMLElement | null>) {
 
       if (Math.abs(alvo - atual) < 0.0004) {
         atual = alvo;
-        rodando = false;
       } else {
         quadro = requestAnimationFrame(passo);
       }
@@ -177,9 +207,16 @@ function useProgressoDeRolagem(ref: RefObject<HTMLElement | null>) {
       }
     };
 
+    /**
+     * Cancela o quadro pendente e agenda outro, em vez de guardar um sinal de
+     * "já estou rodando". Um sinal desses trava para sempre se o quadro
+     * agendado nunca chegar a rodar — aba oculta, janela minimizada, navegador
+     * estrangulando —, e daí o encolhimento morre e não volta mais. Rolagem
+     * dispara no máximo uma vez por quadro, então trocar o agendamento sai
+     * praticamente de graça.
+     */
     const acordar = () => {
-      if (rodando) return;
-      rodando = true;
+      if (quadro) cancelAnimationFrame(quadro);
       quadro = requestAnimationFrame(passo);
     };
 
