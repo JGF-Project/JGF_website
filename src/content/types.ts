@@ -91,6 +91,38 @@ export interface FaqItem {
   answer: string;
 }
 
+/** Como o campo é desenhado e validado no formulário de prévia. */
+export type PreviaTipo =
+  | "texto"
+  | "email"
+  | "telefone"
+  | "textarea"
+  | "selecao"
+  | "opcoes";
+
+export interface PreviaCampo {
+  id: string;
+  /** A pergunta, escrita como alguém falaria. */
+  label: string;
+  placeholder?: string;
+  tipo: PreviaTipo;
+  /** Alternativas de `selecao` e `opcoes`. */
+  opcoes?: readonly string[];
+  obrigatorio: boolean;
+  /** Mensagem exibida quando o campo obrigatório não passa na conferência. */
+  erro?: string;
+  /** Altura da textarea, em linhas. */
+  linhas?: number;
+}
+
+export interface PreviaEtapa {
+  id: string;
+  /** Rótulo curto, usado na barra de progresso. */
+  nome: string;
+  titulo: string;
+  campos: readonly PreviaCampo[];
+}
+
 export interface SiteContent {
   locale: string;
   nav: {
@@ -106,10 +138,35 @@ export interface SiteContent {
     badge: string;
     title: string;
     titleHighlight: string;
+    /** Chamada comercial do bloco à direita da imagem. */
+    pitch: string;
     subtitle: string;
     primaryCta: string;
     secondaryCta: string;
     highlights: { value: string; label: string }[];
+  };
+  previa: {
+    eyebrow: string;
+    title: string;
+    subtitle: string;
+    progressoLabel: string;
+    etapas: readonly PreviaEtapa[];
+    continuar: string;
+    voltar: string;
+    revisao: {
+      nome: string;
+      titulo: string;
+      subtitle: string;
+      editar: string;
+      enviar: string;
+      naoInformado: string;
+    };
+    sucesso: {
+      titulo: string;
+      descricao: string;
+      aviso: string;
+      voltar: string;
+    };
   };
   services: {
     eyebrow: string;

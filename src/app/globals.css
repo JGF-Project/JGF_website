@@ -881,3 +881,369 @@ article[id^="projeto-"]:target {
     opacity: 1;
   }
 }
+
+/* ---------------------------------------------------------------
+   Formulário de prévia.
+
+   O card é escuro nos dois temas, de propósito: ele é o momento comercial da
+   página e precisa se destacar do fundo claro tanto quanto do escuro. Por
+   isso as cores dele são fixas aqui, e não tokens do tema — só o azul da
+   marca vem de --brand-vivo, para continuar acompanhando a identidade.
+   --------------------------------------------------------------- */
+.previa-card {
+  --previa-fundo: #101418;
+  --previa-campo: #171c21;
+  --previa-borda: rgba(252, 252, 252, 0.1);
+  --previa-borda-forte: rgba(252, 252, 252, 0.18);
+  --previa-texto: #fcfcfc;
+  --previa-suave: #9aa7ae;
+  --previa-erro: #ff8f8f;
+
+  position: relative;
+  overflow: hidden;
+  border: 1px solid var(--previa-borda);
+  border-radius: 1.5rem;
+  background: var(--previa-fundo);
+  padding: clamp(1.5rem, 4vw, 3.5rem);
+  color: var(--previa-texto);
+  box-shadow: 0 30px 80px -50px rgba(0, 0, 0, 0.9);
+}
+
+.previa-eyebrow {
+  display: inline-flex;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  line-height: 1;
+  text-transform: uppercase;
+  color: var(--brand-vivo);
+}
+
+.previa-titulo {
+  font-size: clamp(1.65rem, 4vw, 2.5rem);
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+}
+
+.previa-apoio {
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: var(--previa-suave);
+  text-wrap: pretty;
+}
+
+.previa-nota {
+  font-size: 0.8rem;
+  line-height: 1.55;
+  color: var(--previa-suave);
+}
+
+.previa-pergunta {
+  font-size: clamp(1.15rem, 2.4vw, 1.5rem);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.25;
+}
+
+.previa-etapa-conta {
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--previa-suave);
+}
+
+/* --- Barra de progresso: um traço por etapa --- */
+.previa-progresso {
+  display: flex;
+  gap: 0.4rem;
+}
+
+.previa-barra {
+  height: 4px;
+  flex: 1;
+  border-radius: var(--r-pill);
+  background: var(--previa-borda-forte);
+  transition: background-color 400ms ease;
+}
+
+.previa-barra[data-preenchida="true"] {
+  background: var(--brand-vivo);
+}
+
+/* --- Entrada de cada etapa --- */
+@keyframes previa-entra {
+  from {
+    opacity: 0;
+    translate: 0 10px;
+  }
+  to {
+    opacity: 1;
+    translate: 0 0;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .previa-passo {
+    animation: previa-entra 380ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+}
+
+/* --- Campos --- */
+.previa-rotulo {
+  display: block;
+  font-size: 0.9rem;
+  font-weight: 500;
+  line-height: 1.45;
+  color: var(--previa-texto);
+}
+
+.previa-opcional {
+  font-weight: 400;
+  color: var(--previa-suave);
+}
+
+.previa-campo {
+  width: 100%;
+  border: 1px solid var(--previa-borda);
+  border-radius: 0.7rem;
+  background: var(--previa-campo);
+  padding: 0.85rem 1rem;
+  font: inherit;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  color: var(--previa-texto);
+  transition:
+    border-color 180ms ease,
+    box-shadow 180ms ease;
+}
+
+.previa-campo::placeholder {
+  color: color-mix(in srgb, var(--previa-suave) 70%, transparent);
+}
+
+.previa-campo:focus {
+  border-color: var(--brand-vivo);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--brand-vivo) 22%, transparent);
+  outline: none;
+}
+
+.previa-campo[data-erro] {
+  border-color: var(--previa-erro);
+}
+
+textarea.previa-campo {
+  resize: vertical;
+  min-height: 6rem;
+}
+
+/* A seta do select é desenhada aqui: a nativa não acompanha o tema escuro. */
+select.previa-campo {
+  appearance: none;
+  padding-right: 2.75rem;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%239aa7ae' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 1rem center;
+  background-size: 1.1rem;
+}
+
+select.previa-campo[data-vazio] {
+  color: color-mix(in srgb, var(--previa-suave) 70%, transparent);
+}
+
+select.previa-campo option {
+  background: var(--previa-campo);
+  color: var(--previa-texto);
+}
+
+/* --- Alternativas em botão, com rádio de verdade por baixo --- */
+.previa-opcoes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+}
+
+.previa-opcao {
+  cursor: pointer;
+}
+
+.previa-opcao input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.previa-opcao span {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid var(--previa-borda);
+  border-radius: var(--r-pill);
+  background: var(--previa-campo);
+  padding: 0.65rem 1.15rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--previa-texto);
+  transition:
+    border-color 180ms ease,
+    background-color 180ms ease,
+    color 180ms ease;
+}
+
+.previa-opcao:hover span {
+  border-color: var(--previa-borda-forte);
+}
+
+.previa-opcao input:checked + span {
+  border-color: var(--brand-vivo);
+  background: color-mix(in srgb, var(--brand-vivo) 16%, transparent);
+  color: var(--brand-vivo);
+}
+
+.previa-opcao input:focus-visible + span {
+  outline: 2px solid var(--brand-vivo);
+  outline-offset: 3px;
+}
+
+.previa-erro {
+  margin-top: 0.5rem;
+  font-size: 0.83rem;
+  line-height: 1.45;
+  color: var(--previa-erro);
+}
+
+/* --- Resumo da revisão --- */
+.previa-resumo {
+  border: 1px solid var(--previa-borda);
+  border-radius: 0.9rem;
+  background: color-mix(in srgb, var(--previa-campo) 60%, transparent);
+  padding: 1.1rem 1.25rem;
+}
+
+.previa-resumo-topo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.previa-resumo-nome {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--previa-suave);
+}
+
+.previa-editar {
+  border: 0;
+  background: none;
+  padding: 0;
+  font: inherit;
+  font-size: 0.83rem;
+  font-weight: 600;
+  color: var(--brand-vivo);
+  cursor: pointer;
+}
+
+.previa-editar:hover {
+  text-decoration: underline;
+}
+
+.previa-resumo-lista {
+  margin-top: 0.9rem;
+  display: grid;
+  gap: 0.8rem;
+}
+
+.previa-resumo-lista dt {
+  font-size: 0.8rem;
+  line-height: 1.4;
+  color: var(--previa-suave);
+}
+
+.previa-resumo-lista dd {
+  margin: 0.2rem 0 0;
+  font-size: 0.93rem;
+  line-height: 1.5;
+  color: var(--previa-texto);
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
+}
+
+.previa-resumo-lista dd[data-vazio="true"] {
+  color: color-mix(in srgb, var(--previa-suave) 75%, transparent);
+  font-style: italic;
+}
+
+/* --- Botões --- */
+.previa-acoes {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 0.75rem;
+}
+
+.previa-botao {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  border: 1px solid transparent;
+  border-radius: var(--r-pill);
+  padding: 0.9rem 1.75rem;
+  font: inherit;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    background-color 180ms ease,
+    border-color 180ms ease,
+    color 180ms ease;
+}
+
+.previa-botao-principal {
+  background: var(--brand-vivo);
+  color: #05090f;
+}
+
+.previa-botao-principal:hover {
+  background: color-mix(in srgb, var(--brand-vivo) 82%, #ffffff);
+}
+
+.previa-botao-secundario {
+  border-color: var(--previa-borda-forte);
+  background: none;
+  color: var(--previa-texto);
+}
+
+.previa-botao-secundario:hover {
+  border-color: var(--brand-vivo);
+  color: var(--brand-vivo);
+}
+
+.previa-selo {
+  display: inline-grid;
+  place-items: center;
+  width: 3.25rem;
+  height: 3.25rem;
+  border-radius: var(--r-pill);
+  border: 1px solid color-mix(in srgb, var(--brand-vivo) 40%, transparent);
+  background: color-mix(in srgb, var(--brand-vivo) 14%, transparent);
+  color: var(--brand-vivo);
+}
+
+/* No celular os botões ocupam a largura toda e a ordem inverte: o principal
+   fica embaixo, mais perto do polegar. */
+@media (max-width: 520px) {
+  .previa-acoes {
+    flex-direction: column-reverse;
+  }
+
+  .previa-botao {
+    width: 100%;
+  }
+}

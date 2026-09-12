@@ -34,15 +34,173 @@ export const ptBR: SiteContent = {
     badge: "Desenvolvimento web sob medida",
     title: "Sites e sistemas feitos",
     titleHighlight: "sob medida para o seu negócio",
+    pitch: "Veja seu site antes de decidir.",
     subtitle:
-      "A JGF Company desenvolve sites institucionais, landing pages, sistemas de agendamento e dashboards. Cada projeto é construído do zero, de acordo com a necessidade de quem contrata.",
-    primaryCta: "Iniciar um projeto",
+      "Desenvolvemos sites institucionais, landing pages, sistemas de agendamento e dashboards sob medida. Conte o que a sua empresa precisa e montamos uma prévia do projeto.",
+    primaryCta: "Ver a prévia do meu site",
     secondaryCta: "Ver nossos projetos",
     highlights: [
       { value: "Sob medida", label: "Nada de template pronto" },
       { value: "Responsivo", label: "Funciona bem no celular" },
       { value: "Direto ao ponto", label: "Você fala com quem programa" },
     ],
+  },
+
+  /**
+   * Formulário de prévia. Os campos são dados, não marcação: acrescentar,
+   * tirar ou reordenar pergunta se resolve aqui, sem tocar no componente.
+   */
+  previa: {
+    eyebrow: "Sem compromisso",
+    title: "Peça sua prévia grátis",
+    subtitle:
+      "Responda algumas perguntas sobre o seu negócio. Com elas montamos uma prévia do seu projeto e voltamos para conversar.",
+    progressoLabel: "Etapa {atual} de {total}",
+    continuar: "Continuar",
+    voltar: "Voltar",
+    etapas: [
+      {
+        id: "contato",
+        nome: "Contato",
+        titulo: "Olá! Vamos começar pelo básico.",
+        campos: [
+          {
+            id: "nome",
+            label: "Qual o seu nome?",
+            placeholder: "Digite aqui...",
+            tipo: "texto",
+            obrigatorio: true,
+            erro: "Escreva seu nome, para sabermos com quem estamos falando.",
+          },
+          {
+            id: "whatsapp",
+            label: "Qual o seu WhatsApp para contato?",
+            placeholder: "(11) 99999-9999",
+            tipo: "telefone",
+            obrigatorio: true,
+            erro: "Informe um telefone com DDD, com 10 ou 11 dígitos.",
+          },
+          {
+            id: "email",
+            label: "Qual o melhor e-mail para receber a confirmação?",
+            placeholder: "voce@empresa.com.br",
+            tipo: "email",
+            obrigatorio: true,
+            erro: "Confira o e-mail: parece faltar alguma coisa.",
+          },
+        ],
+      },
+      {
+        id: "empresa",
+        nome: "Empresa",
+        titulo: "Agora, sobre a sua empresa.",
+        campos: [
+          {
+            id: "sobre",
+            label: "Me conte um pouco sobre a sua empresa.",
+            placeholder: "Somos uma empresa que...",
+            tipo: "textarea",
+            linhas: 4,
+            obrigatorio: true,
+            erro: "Escreva pelo menos uma frase sobre a empresa.",
+          },
+          {
+            id: "presenca",
+            label: "Qual o Instagram ou site da sua empresa?",
+            placeholder: "@suaempresa ou www.suaempresa.com.br",
+            tipo: "texto",
+            obrigatorio: false,
+          },
+          {
+            id: "tipo",
+            label: "O que você precisa desenvolver?",
+            tipo: "selecao",
+            opcoes: [
+              "Site institucional",
+              "Landing page",
+              "Sistema web",
+              "Sistema de agendamento",
+              "Loja virtual",
+              "Dashboard",
+              "Outro",
+            ],
+            obrigatorio: true,
+            erro: "Escolha o que você precisa desenvolver.",
+          },
+          {
+            id: "objetivo",
+            label: "Qual o principal objetivo do projeto?",
+            tipo: "selecao",
+            opcoes: [
+              "Divulgar minha empresa",
+              "Conseguir mais clientes",
+              "Receber agendamentos",
+              "Vender pela internet",
+              "Apresentar meus serviços",
+              "Automatizar um processo",
+              "Outro",
+            ],
+            obrigatorio: true,
+            erro: "Escolha o objetivo principal do projeto.",
+          },
+        ],
+      },
+      {
+        id: "projeto",
+        nome: "Projeto",
+        titulo: "Só mais alguns detalhes.",
+        campos: [
+          {
+            id: "jaTemSite",
+            label: "Você já possui um site?",
+            tipo: "opcoes",
+            opcoes: ["Sim", "Não", "Estou reformulando"],
+            obrigatorio: true,
+            erro: "Escolha uma das opções.",
+          },
+          {
+            id: "prazo",
+            label: "Qual o prazo desejado?",
+            tipo: "selecao",
+            opcoes: [
+              "O quanto antes",
+              "Até 7 dias",
+              "Até 15 dias",
+              "Até 30 dias",
+              "Ainda não sei",
+            ],
+            obrigatorio: true,
+            erro: "Escolha um prazo, nem que seja “ainda não sei”.",
+          },
+          {
+            id: "detalhes",
+            label: "Conte mais sobre o que você precisa.",
+            placeholder:
+              "Descreva seu projeto, funcionalidades ou qualquer detalhe importante...",
+            tipo: "textarea",
+            linhas: 6,
+            obrigatorio: false,
+          },
+        ],
+      },
+    ],
+    revisao: {
+      nome: "Revisão",
+      titulo: "Perfeito! É só revisar e enviar.",
+      subtitle:
+        "Confira as respostas abaixo. Dá para voltar e corrigir qualquer uma antes de enviar.",
+      editar: "Editar",
+      enviar: "Enviar solicitação",
+      naoInformado: "Não informado",
+    },
+    sucesso: {
+      titulo: "Solicitação enviada!",
+      descricao:
+        "Recebemos suas informações. A equipe da JGF Company entrará em contato para conversar sobre o seu projeto.",
+      aviso:
+        "O envio abre o seu programa de e-mail com tudo preenchido. Se ele não abrir, escreva para jgfcompanyfr@gmail.com.",
+      voltar: "Voltar para o início",
+    },
   },
 
   services: {

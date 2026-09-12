@@ -25,11 +25,21 @@ export function HeroApoio({ compacto = false }: { compacto?: boolean }) {
 
   return (
     <>
+      <h2
+        className={`font-semibold text-balance ${
+          compacto
+            ? "max-w-lg text-3xl leading-[1.1] xl:text-4xl"
+            : "max-w-xl text-3xl leading-[1.1] sm:text-4xl"
+        }`}
+      >
+        {hero.pitch}
+      </h2>
+
       <p
         className={
           compacto
-            ? "max-w-xl text-base leading-relaxed text-muted text-pretty"
-            : "max-w-2xl text-base leading-relaxed text-muted text-pretty sm:text-lg"
+            ? "mt-4 max-w-xl text-base leading-relaxed text-muted text-pretty"
+            : "mt-4 max-w-2xl text-base leading-relaxed text-muted text-pretty sm:text-lg"
         }
       >
         {hero.subtitle}
@@ -40,8 +50,11 @@ export function HeroApoio({ compacto = false }: { compacto?: boolean }) {
           compacto ? "mt-6" : "mt-7"
         }`}
       >
+        {/* Leva à seção de prévia, logo abaixo. A rolagem é suave pelo
+            `scroll-behavior: smooth` que já vale para o documento inteiro,
+            então continua funcionando sem JavaScript e com clique do meio. */}
         <a
-          href="#contato"
+          href="#previa"
           className="inline-flex items-center justify-center gap-2 rounded-pill bg-brand px-7 py-3.5 text-sm font-semibold text-background transition-colors hover:bg-brand-vivo"
         >
           {hero.primaryCta}
