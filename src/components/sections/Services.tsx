@@ -3,7 +3,6 @@
 import { useId, useState } from "react";
 import { Container } from "@/components/ui/Container";
 import { Reveal } from "@/components/ui/Reveal";
-import { SectionHeading } from "@/components/ui/SectionHeading";
 import { serviceIcons, GlobeIcon, PlusIcon } from "@/components/ui/icons";
 import { content } from "@/content";
 
@@ -26,17 +25,24 @@ export function Services() {
   const servicoAberto = services.items.find((s) => s.id === aberto) ?? null;
 
   return (
-    <section id="servicos" className="scroll-mt-24 py-20 sm:py-28">
+    <section id="servicos" className="scroll-mt-24 pt-10 pb-16 sm:pt-12 sm:pb-20">
       <Container>
-        <SectionHeading
-          eyebrow={services.eyebrow}
-          title={services.title}
-          subtitle={services.subtitle}
-        />
+        {/* Cabeçalho curto e alinhado à esquerda, encostado na fileira de
+            cards: é o encaixe da referência, no lugar de um título grande
+            centralizado que empurraria os cards para baixo da dobra. */}
+        <Reveal>
+          <p className="pill">{services.eyebrow}</p>
+          <h2 className="mt-3 text-2xl font-semibold sm:text-3xl">
+            {services.title}
+          </h2>
+          <p className="mt-2 max-w-xl text-sm leading-relaxed text-muted text-pretty">
+            {services.subtitle}
+          </p>
+        </Reveal>
 
         {/* No celular vira uma faixa que rola de lado, para os quatro caberem
             sem virar uma pilha alta demais antes do conteúdo. */}
-        <div className="servicos-faixa mt-14">
+        <div className="servicos-faixa mt-7">
           {services.items.map((service, i) => {
             const Icon =
               serviceIcons[service.id as keyof typeof serviceIcons] ?? GlobeIcon;

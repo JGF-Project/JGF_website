@@ -3,15 +3,16 @@ import { Reveal } from "@/components/ui/Reveal";
 import { HeroApoio } from "./HeroApoio";
 
 /**
- * Texto de apoio do hero em telas estreitas.
+ * Texto de apoio do hero.
  *
- * A partir de `lg` este bloco some: ali o mesmo conteúdo aparece dentro do
- * palco do hero, ao lado do quadro reduzido. Abaixo disso não há largura para
- * pôr texto ao lado da imagem, então ele volta a ser uma seção comum.
+ * Já morou dentro do palco do hero, aparecendo à direita conforme a imagem
+ * encolhia. Com a faixa de abertura passando a ter altura fixa, não há mais
+ * espaço se abrindo ao lado dela, e este bloco voltou a ser uma seção comum,
+ * logo depois da faixa.
  */
 export function Hero() {
   return (
-    <section className="pt-16 pb-20 sm:pt-20 sm:pb-24 lg:hidden">
+    <section className="pt-14 pb-16 sm:pt-16 sm:pb-20">
       <Container>
         <Reveal>
           <HeroApoio />

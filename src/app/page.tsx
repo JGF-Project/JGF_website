@@ -26,10 +26,13 @@ export default function Home() {
       <Header />
 
       <main id="conteudo" className="flex-1">
+        {/* Serviços sobe para logo depois da faixa de abertura: é o encaixe
+            da referência, em que a fileira de cards aparece grudada no
+            carrossel, antes de qualquer bloco longo de texto. */}
         <HeroVisual />
+        <Services />
         <Hero />
         <Previa />
-        <Services />
         <Process />
         <Portfolio />
         <Tech />
