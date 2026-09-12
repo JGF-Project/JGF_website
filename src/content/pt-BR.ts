@@ -303,6 +303,12 @@ export const ptBR: SiteContent = {
     gallerySubtitle:
       "Um passeio pelas interfaces que já entregamos. Passe o mouse para parar.",
     galleryPending: "Imagem em breve",
+    carrossel: {
+      rotulo: "Projetos em destaque",
+      status: "Projeto {atual} de {total}: {nome}",
+      pausar: "Pausar a troca automática",
+      retomar: "Retomar a troca automática",
+    },
     projects: [
       {
         id: "rr-barbearia",

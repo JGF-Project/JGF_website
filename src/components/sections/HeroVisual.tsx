@@ -1,12 +1,21 @@
 "use client";
 
-import { useEffect, useRef, useState, type RefObject } from "react";
+import {
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  useSyncExternalStore,
+  type CSSProperties,
+  type KeyboardEvent,
+  type RefObject,
+} from "react";
 import Image from "next/image";
 import { HeroApoio } from "./HeroApoio";
 import { content } from "@/content";
 
 /** Tempo que cada projeto fica em cena antes da próxima troca. */
-const INTERVALO_MS = 4000;
+const DURACAO_MS = 5000;
 
 /**
  * Hero de tela cheia.
@@ -14,8 +23,10 @@ const INTERVALO_MS = 4000;
  * Dois comportamentos independentes convivem aqui, e nenhum interfere no
  * outro:
  *
- * A) o carrossel roda pelo relógio — um `setInterval` avança o índice a cada
- *    4 segundos e o crossfade acontece por transição de CSS;
+ * A) o carrossel roda pelo relógio, e o relógio é o próprio anel de progresso
+ *    do botão de pausa: a troca acontece no `animationend` dele. Um
+ *    `setTimeout` separado dessincronizaria do anel toda vez que a rotação
+ *    fosse pausada no meio do caminho;
  * B) a redução roda pela rolagem — um laço de `requestAnimationFrame` escreve
  *    a progressão em `--p` na seção, e largura, altura e canto do quadro saem
  *    dela por `calc()`.
@@ -49,31 +60,59 @@ export function HeroVisual() {
   const { ativo, anterior } = quadro;
   const palcoRef = useRef<HTMLElement>(null);
 
+  // Três motivos independentes para a rotação parar. Só o manual sobrevive a
+  // tirar o mouse ou voltar para a aba — é isso que faz a pausa do usuário
+  // valer mais que as automáticas.
+  const movimentoReduzido = useMovimentoReduzido();
+  const abaOculta = useAbaOculta();
+
+  // Enquanto ninguém tocar no botão, quem manda é a preferência do sistema:
+  // com movimento reduzido o carrossel abre parado. O primeiro clique passa a
+  // decisão para o usuário e ela vale daí em diante.
+  const [escolha, setEscolha] = useState<boolean | null>(null);
+  const pausadoManual = escolha ?? movimentoReduzido;
+
+  // A pausa por mouse em cima não está aqui: ela é `:hover` puro no CSS, que
+  // congela o mesmo anel. Sai mais confiável do que `onMouseEnter`, que o
+  // React sintetiza a partir de mouseover/mouseout, e volta sozinha ao sair
+  // sem desfazer uma pausa manual.
+  const parado = pausadoManual || abaOculta;
+
   const irPara = (i: number) =>
     setQuadro((q) => (q.ativo === i ? q : { ativo: i, anterior: q.ativo }));
 
-  // --- ANIMAÇÃO A: carrossel, pelo tempo ---
-  useEffect(() => {
-    if (total < 2) return;
+  const andar = (passo: number) =>
+    setQuadro((q) => ({
+      ativo: (q.ativo + passo + total) % total,
+      anterior: q.ativo,
+    }));
 
-    // Um disparo por vez, reagendado a cada troca. Assim quem usa os pontos
-    // ganha os 4 segundos inteiros na imagem escolhida, em vez de pegar o
-    // resto de um intervalo já correndo. A limpeza cancela o disparo pendente,
-    // então nunca existe mais de um relógio vivo.
-    const id = setTimeout(() => {
-      setQuadro((q) => ({ ativo: (q.ativo + 1) % total, anterior: q.ativo }));
-    }, INTERVALO_MS);
-
-    return () => clearTimeout(id);
-  }, [ativo, total]);
+  function aoTeclar(evento: KeyboardEvent<HTMLDivElement>) {
+    if (evento.key !== "ArrowRight" && evento.key !== "ArrowLeft") return;
+    evento.preventDefault();
+    andar(evento.key === "ArrowRight" ? 1 : -1);
+  }
 
   // --- ANIMAÇÃO B: redução, pela rolagem ---
   useProgressoDeRolagem(palcoRef);
 
+  const { carrossel } = portfolio;
+  const rotulado = carrossel.status
+    .replace("{atual}", String(ativo + 1))
+    .replace("{total}", String(total))
+    .replace("{nome}", telas[ativo]?.alt ?? "");
+
   return (
     <section id="inicio" className="hero-palco" ref={palcoRef}>
       <div className="hero-fixo">
-        <div className="hero-quadro">
+        <div
+          className="hero-quadro"
+          role="group"
+          aria-roledescription="carrossel"
+          aria-label={carrossel.rotulo}
+          tabIndex={0}
+          onKeyDown={aoTeclar}
+        >
           <div className="hero-telas">
             {telas.map((tela, i) => (
               <figure
@@ -88,7 +127,7 @@ export function HeroVisual() {
                   fill
                   sizes="100vw"
                   // Só a primeira entra no carregamento crítico. As outras têm
-                  // 4 segundos de folga antes de aparecer, tempo de sobra para
+                  // 5 segundos de folga antes de aparecer, tempo de sobra para
                   // chegarem sem disputar banda com a abertura da página.
                   priority={i === 0}
                   loading={i === 0 ? undefined : "eager"}
@@ -112,25 +151,68 @@ export function HeroVisual() {
             </h1>
           </div>
 
-          {/* Indicadores discretos. São botões de verdade: conteúdo que troca
+          {/* Quem usa leitor de tela não vê a imagem trocar: esta linha, que
+              não aparece na tela, é o que anuncia a troca. */}
+          <p className="sr-only" aria-live="polite">
+            {rotulado}
+          </p>
+
+          {/* Controles discretos. São botões de verdade: conteúdo que troca
               sozinho precisa poder ser controlado por quem navega pelo teclado
               ou quer voltar a uma tela que já passou. */}
-          <div
-            className="hero-pontos"
-            role="group"
-            aria-label="Projetos em destaque"
-          >
-            {telas.map((tela, i) => (
+          <div className="hero-controles">
+            <div className="hero-pontos">
+              {telas.map((tela, i) => (
+                <button
+                  key={tela.id}
+                  type="button"
+                  className="hero-ponto"
+                  data-ativo={i === ativo}
+                  aria-current={i === ativo ? "true" : undefined}
+                  aria-label={tela.alt}
+                  onClick={() => irPara(i)}
+                />
+              ))}
+            </div>
+
+            {total > 1 && (
               <button
-                key={tela.id}
                 type="button"
-                className="hero-ponto"
-                data-ativo={i === ativo}
-                aria-current={i === ativo ? "true" : undefined}
-                aria-label={tela.alt}
-                onClick={() => irPara(i)}
-              />
-            ))}
+                className="hero-pausa"
+                aria-pressed={pausadoManual}
+                aria-label={
+                  pausadoManual ? carrossel.retomar : carrossel.pausar
+                }
+                onClick={() => setEscolha(!pausadoManual)}
+              >
+                {/* O anel é o relógio: ele vai de 0 a 100 por cento em
+                    DURACAO_MS e, ao terminar, avança o slide. A chave o
+                    remonta a cada troca, então o ciclo recomeça do zero. */}
+                <span
+                  key={ativo}
+                  className="hero-anel"
+                  data-parado={parado || undefined}
+                  style={{ "--duracao": `${DURACAO_MS}ms` } as CSSProperties}
+                  onAnimationEnd={() => andar(1)}
+                  aria-hidden
+                />
+                <svg
+                  viewBox="0 0 24 24"
+                  className="hero-pausa-icone"
+                  aria-hidden
+                  fill="currentColor"
+                >
+                  {pausadoManual ? (
+                    <path d="M8 5.5v13l11-6.5z" />
+                  ) : (
+                    <>
+                      <rect x="8" y="5.5" width="3" height="13" rx="1" />
+                      <rect x="13" y="5.5" width="3" height="13" rx="1" />
+                    </>
+                  )}
+                </svg>
+              </button>
+            )}
           </div>
         </div>
 
@@ -141,6 +223,47 @@ export function HeroVisual() {
         </div>
       </div>
     </section>
+  );
+}
+
+/**
+ * Lê uma media query como fonte externa.
+ *
+ * Assinar direto assim, em vez de copiar o valor para dentro de um estado num
+ * efeito, evita a renderização em cascata que o `setState` dentro do efeito
+ * provocaria. No servidor a resposta é `false`: não há como saber a
+ * preferência de quem ainda não abriu a página.
+ */
+function useMediaQuery(consulta: string) {
+  const assinar = useCallback(
+    (aoMudar: () => void) => {
+      const mq = window.matchMedia(consulta);
+      mq.addEventListener("change", aoMudar);
+      return () => mq.removeEventListener("change", aoMudar);
+    },
+    [consulta],
+  );
+
+  return useSyncExternalStore(
+    assinar,
+    () => window.matchMedia(consulta).matches,
+    () => false,
+  );
+}
+
+function useMovimentoReduzido() {
+  return useMediaQuery("(prefers-reduced-motion: reduce)");
+}
+
+/** Aba escondida não precisa girar carrossel. */
+function useAbaOculta() {
+  return useSyncExternalStore(
+    (aoMudar) => {
+      document.addEventListener("visibilitychange", aoMudar);
+      return () => document.removeEventListener("visibilitychange", aoMudar);
+    },
+    () => document.hidden,
+    () => false,
   );
 }
 

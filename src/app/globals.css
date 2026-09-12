@@ -11,6 +11,15 @@
   initial-value: 52%;
 }
 
+/* Preenchimento do anel de progresso do carrossel. Registrada para o
+   navegador saber interpolá-la: sem isso ela saltaria de 0 a 100 no meio do
+   caminho, em vez de girar. */
+@property --anel {
+  syntax: "<percentage>";
+  inherits: false;
+  initial-value: 0%;
+}
+
 /* ---------------------------------------------------------------
    Design system inspirado na referência Ardentis (DeFi dashboard).
    Paleta original do projeto: FCFCFC / 030303 / 112B33 / 56D7FD / B5B5B5.
@@ -690,24 +699,6 @@ article[id^="projeto-"]:target {
   /* Um pouco acima do centro: nas três artes o assunto está na metade de cima
      e o rodapé é só chão e reflexo, que é o que pode ser cortado. */
   object-position: 50% 44%;
-  scale: 1;
-  transition: scale 4800ms linear;
-}
-
-/* Ken Burns discreto: só a figura em cena cresce, e só 2 por cento. */
-.hero-tela[data-ativo="true"] .hero-imagem {
-  scale: 1.02;
-}
-
-/* Com movimento reduzido cai o zoom, que é o único movimento autônomo aqui.
-   O crossfade fica: variação de opacidade não carrega direção de movimento.
-   A redução também fica, porque acompanha a rolagem do próprio usuário. */
-@media (prefers-reduced-motion: reduce) {
-  .hero-imagem,
-  .hero-tela[data-ativo="true"] .hero-imagem {
-    scale: 1;
-    transition: none;
-  }
 }
 
 /* --- Véu e legenda sobre a imagem --- */
@@ -768,11 +759,17 @@ article[id^="projeto-"]:target {
    Ficam no canto de baixo à direita, longe da legenda. O alvo de toque tem
    22px, mas o desenho visível é bem menor: é indicador, não controle
    chamativo. */
-.hero-pontos {
+.hero-controles {
   position: absolute;
   right: clamp(1rem, 3vw, 3rem);
   bottom: clamp(1rem, 3vw, 3rem);
   z-index: 3;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.hero-pontos {
   display: flex;
   gap: 2px;
 }
@@ -812,6 +809,80 @@ article[id^="projeto-"]:target {
   .hero-ponto::after {
     transition: none;
   }
+}
+
+/* --- Botão de pausa com anel de progresso ---
+   O anel não é enfeite: ele é o relógio do carrossel. Vai de 0 a 100 por
+   cento em --duracao e, ao terminar, o componente avança o slide. Pausar é
+   só congelar esta animação, então o anel e a troca nunca se desencontram —
+   o que aconteceria se o tempo fosse contado por um setTimeout à parte.
+
+   Esta animação não passa por prefers-reduced-motion de propósito: com essa
+   preferência o carrossel já abre parado, e se a pessoa apertar play ela
+   precisa ver quanto falta. */
+.hero-pausa {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  border: 0;
+  border-radius: var(--r-pill);
+  background: rgba(3, 7, 14, 0.4);
+  color: #ffffff;
+  cursor: pointer;
+}
+
+.hero-anel {
+  position: absolute;
+  inset: 0;
+  border-radius: var(--r-pill);
+  /* A máscara vaza o miolo e deixa só um aro de 2px. */
+  background: conic-gradient(
+    #ffffff var(--anel),
+    rgba(255, 255, 255, 0.28) 0
+  );
+  mask: radial-gradient(
+    farthest-side,
+    transparent calc(100% - 2px),
+    #000 calc(100% - 2px)
+  );
+  animation: hero-anel var(--duracao) linear forwards;
+}
+
+.hero-anel[data-parado] {
+  animation-play-state: paused;
+}
+
+/* Mouse em cima do carrossel também segura o anel — e, como o anel é o
+   relógio, segura a troca junto. Ao sair, volta sozinho, a menos que
+   `data-parado` ainda esteja lá por pausa manual ou aba escondida.
+   Só onde existe mouse de verdade: em tela de toque o `:hover` costuma ficar
+   grudado depois do toque e o carrossel nunca mais voltaria a girar. */
+@media (hover: hover) {
+  .hero-quadro:hover .hero-anel {
+    animation-play-state: paused;
+  }
+}
+
+@keyframes hero-anel {
+  from {
+    --anel: 0%;
+  }
+  to {
+    --anel: 100%;
+  }
+}
+
+.hero-pausa-icone {
+  position: relative;
+  width: 13px;
+  height: 13px;
+}
+
+.hero-pausa:hover {
+  background: rgba(3, 7, 14, 0.62);
 }
 
 /* --- Texto que entra à direita, no lugar que o quadro abriu --- */
@@ -1245,5 +1316,146 @@ select.previa-campo option {
 
   .previa-botao {
     width: 100%;
+  }
+}
+
+/* ---------------------------------------------------------------
+   Serviços recolhidos: faixa de botões e um painel compartilhado.
+   --------------------------------------------------------------- */
+.servicos-faixa {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.85rem;
+}
+
+.servicos-celula {
+  min-width: 0;
+}
+
+.servico-botao {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  align-items: center;
+  gap: 0.9rem;
+  padding: 1.1rem 1.15rem;
+  font: inherit;
+  text-align: left;
+  color: var(--foreground);
+  cursor: pointer;
+}
+
+.servico-titulo {
+  flex: 1;
+  min-width: 0;
+  font-size: 0.98rem;
+  font-weight: 600;
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+}
+
+/* O mais vira menos quando abre: o giro diz o que o clique fez. */
+.servico-sinal {
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+  border-radius: var(--r-pill);
+  border: 1px solid var(--border);
+  color: var(--muted);
+  transition:
+    rotate 260ms ease,
+    color 200ms ease,
+    border-color 200ms ease;
+}
+
+.servico-botao[data-aberto="true"] {
+  --brilho-borda: 78%;
+}
+
+.servico-botao[data-aberto="true"] .servico-sinal {
+  rotate: 45deg;
+  border-color: color-mix(in srgb, var(--brand) 45%, transparent);
+  color: var(--brand);
+}
+
+/* De 0fr a 1fr: a linha cresce até a altura real do conteúdo, sem precisar
+   adivinhar um max-height que ora corta, ora deixa sobra. */
+.servico-painel {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition:
+    grid-template-rows 340ms cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 240ms ease,
+    margin-top 340ms cubic-bezier(0.22, 1, 0.36, 1);
+  opacity: 0;
+  margin-top: 0;
+}
+
+.servico-painel[data-aberto="true"] {
+  grid-template-rows: 1fr;
+  opacity: 1;
+  margin-top: 0.85rem;
+}
+
+.servico-painel-interno {
+  overflow: hidden;
+  min-height: 0;
+}
+
+.servico-item {
+  position: relative;
+  padding-left: 1.1rem;
+  font-size: 0.9rem;
+  line-height: 1.55;
+  color: var(--muted);
+}
+
+.servico-item::before {
+  content: "";
+  position: absolute;
+  top: 0.62em;
+  left: 0;
+  width: 5px;
+  height: 5px;
+  border-radius: var(--r-pill);
+  background: var(--brand);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .servico-painel,
+  .servico-sinal {
+    transition: none;
+  }
+}
+
+/* Abaixo de lg os quatro não cabem lado a lado: viram uma faixa que rola de
+   lado, com os cartões mantendo largura legível. */
+@media (max-width: 1023px) {
+  .servicos-faixa {
+    display: flex;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    /* O respiro devolve o espaço que o Container tira (px-5, e px-8 a partir
+       de sm), para o primeiro e o último cartão encostarem na borda da tela
+       ao rolar em vez de nascerem já cortados. */
+    margin-inline: -1.25rem;
+    padding-inline: 1.25rem;
+    padding-bottom: 0.5rem;
+    scrollbar-width: thin;
+  }
+
+  .servicos-celula {
+    flex: 0 0 auto;
+    width: min(15rem, 72vw);
+    scroll-snap-align: start;
+  }
+}
+
+@media (min-width: 640px) and (max-width: 1023px) {
+  .servicos-faixa {
+    margin-inline: -2rem;
+    padding-inline: 2rem;
   }
 }

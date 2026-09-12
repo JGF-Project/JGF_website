@@ -195,6 +195,14 @@ export interface SiteContent {
     galleryTitle: string;
     gallerySubtitle: string;
     galleryPending: string;
+    /** Textos dos controles do carrossel do hero. */
+    carrossel: {
+      rotulo: string;
+      /** Aceita {atual}, {total} e {nome}. Lido em voz alta a cada troca. */
+      status: string;
+      pausar: string;
+      retomar: string;
+    };
   };
   tech: {
     eyebrow: string;
