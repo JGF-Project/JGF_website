@@ -27,22 +27,19 @@ export function Services() {
   return (
     <section id="servicos" className="scroll-mt-24 pt-10 pb-16 sm:pt-12 sm:pb-20">
       <Container>
-        {/* Cabeçalho curto e alinhado à esquerda, encostado na fileira de
-            cards: é o encaixe da referência, no lugar de um título grande
-            centralizado que empurraria os cards para baixo da dobra. */}
+        {/* Só o título, alinhado à esquerda e encostado na fileira de cards.
+            O rótulo e o texto de apoio continuam no conteúdo, disponíveis para
+            outra tradução ou para voltarem depois, mas não são exibidos: aqui
+            eles só afastavam os cards da dobra. */}
         <Reveal>
-          <p className="pill">{services.eyebrow}</p>
-          <h2 className="mt-3 text-2xl font-semibold sm:text-3xl">
+          <h2 className="text-2xl font-semibold sm:text-3xl">
             {services.title}
           </h2>
-          <p className="mt-2 max-w-xl text-sm leading-relaxed text-muted text-pretty">
-            {services.subtitle}
-          </p>
         </Reveal>
 
         {/* No celular vira uma faixa que rola de lado, para os quatro caberem
             sem virar uma pilha alta demais antes do conteúdo. */}
-        <div className="servicos-faixa mt-7">
+        <div className="servicos-faixa mt-6">
           {services.items.map((service, i) => {
             const Icon =
               serviceIcons[service.id as keyof typeof serviceIcons] ?? GlobeIcon;

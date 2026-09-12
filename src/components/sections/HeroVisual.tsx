@@ -92,7 +92,10 @@ export function HeroVisual() {
   return (
     <section
       id="inicio"
-      className="hero-faixa"
+      // O recuo de âncora iguala o recuo do topo de `main`, então clicar em
+      // "Home" volta ao começo do documento em vez de esconder a faixa atrás
+      // do cabeçalho fixo.
+      className="hero-faixa scroll-mt-24"
       role="group"
       aria-roledescription="carrossel"
       aria-label={carrossel.rotulo}
