@@ -65,11 +65,6 @@
      profundidade, não o gradiente. */
   --ambiente-a: rgba(11, 127, 158, 0.09);
   --ambiente-b: rgba(100, 85, 216, 0.07);
-
-  /* Ondas do fundo animado. No claro, azul e verde bem lavados. */
-  --onda-1: rgba(86, 215, 253, 0.3);
-  --onda-2: rgba(45, 212, 191, 0.24);
-  --onda-3: rgba(100, 85, 216, 0.14);
 }
 
 .dark {
@@ -101,11 +96,6 @@
 
   --ambiente-a: rgba(86, 215, 253, 0.1);
   --ambiente-b: rgba(139, 124, 255, 0.08);
-
-  /* No escuro, azul e roxo mais profundos, como na primeira referência. */
-  --onda-1: rgba(29, 78, 216, 0.5);
-  --onda-2: rgba(86, 215, 253, 0.22);
-  --onda-3: rgba(109, 92, 255, 0.34);
 }
 
 @theme inline {
@@ -571,10 +561,19 @@ article[id^="projeto-"]:target {
 }
 
 /* ---------------------------------------------------------------
-   Fundo vivo: formas SVG desenhadas, atras de todo o conteudo.
-   Cada camada tem deriva propria e ritmo proprio de parallax, o que
-   cria profundidade. Só transform e animado, entao o navegador
-   resolve tudo na GPU sem recalcular layout.
+   Fundo atmosférico, atrás de todo o conteúdo.
+
+   Só gradiente: uma base em diagonal mais clarões radiais que se cruzam. Não
+   há forma desenhada, borda nem faixa — cada clarão chega a transparente bem
+   antes de encontrar o vizinho, então não dá para dizer onde um começa e o
+   outro termina.
+
+   A camada é fixa, fora do fluxo e sem eventos de ponteiro, e vale para a
+   página inteira: as seções não têm fundo próprio, todas acontecem sobre
+   este mesmo ambiente.
+
+   `contain: strict` prende pintura e layout aqui dentro, então o desfoque da
+   camada de brilho não vaza nem cria barra de rolagem.
    --------------------------------------------------------------- */
 .fundo-vivo {
   position: fixed;
@@ -583,129 +582,122 @@ article[id^="projeto-"]:target {
   overflow: hidden;
   pointer-events: none;
   contain: strict;
+
+  /* Base em azul profundo, virando índigo na diagonal. Sem preto puro. */
+  --atm-base-a: #0c1636;
+  --atm-base-b: #101a44;
+  --atm-base-c: #151c52;
+  /* Os clarões: azul médio, azul claro, azul-arroxeado e lilás. */
+  --atm-azul: rgba(58, 112, 232, 0.32);
+  --atm-azul-claro: rgba(96, 156, 255, 0.2);
+  --atm-indigo: rgba(120, 102, 240, 0.28);
+  --atm-lilas: rgba(158, 138, 255, 0.16);
+  --atm-fundo-frio: rgba(44, 84, 196, 0.24);
+
+  background:
+    radial-gradient(
+      circle at 16% 18%,
+      var(--atm-azul) 0%,
+      transparent 46%
+    ),
+    radial-gradient(
+      circle at 84% 24%,
+      var(--atm-indigo) 0%,
+      transparent 50%
+    ),
+    radial-gradient(
+      circle at 68% 62%,
+      var(--atm-lilas) 0%,
+      transparent 52%
+    ),
+    radial-gradient(
+      circle at 34% 78%,
+      var(--atm-azul-claro) 0%,
+      transparent 48%
+    ),
+    radial-gradient(
+      circle at 50% 96%,
+      var(--atm-fundo-frio) 0%,
+      transparent 55%
+    ),
+    linear-gradient(
+      135deg,
+      var(--atm-base-a) 0%,
+      var(--atm-base-b) 48%,
+      var(--atm-base-c) 100%
+    );
 }
 
-.fundo-svg {
+/* Tema claro: mesma construção, mesmos lugares, tudo lavado. Não é branco —
+   é um azul-lilás bem claro, com contraste de sobra para o texto escuro. */
+:root:not(.dark) .fundo-vivo {
+  --atm-base-a: #f3f5ff;
+  --atm-base-b: #fafbff;
+  --atm-base-c: #f2f4ff;
+  --atm-azul: rgba(74, 122, 235, 0.062);
+  --atm-azul-claro: rgba(96, 156, 255, 0.05);
+  --atm-indigo: rgba(122, 104, 236, 0.055);
+  --atm-lilas: rgba(150, 132, 250, 0.042);
+  --atm-fundo-frio: rgba(64, 108, 214, 0.042);
+}
+
+/* Camada de brilho: três manchas muito desfocadas, quase fundidas à base.
+   Elas existem para tirar a regularidade dos clarões de baixo, não para
+   aparecer — daí o desfoque grande e a opacidade baixa.
+
+   O recuo negativo tira as bordas da mancha de dentro da tela: desfoque
+   deixa a borda do gradiente visível como um halo, e com a mancha começando
+   fora ninguém a vê. */
+.fundo-brilho {
   position: absolute;
-  /* Maior que a viewport: as formas entram e saem pelas bordas em vez
-     de terminarem numa linha reta dentro da tela. */
-  inset: -18%;
-  width: 136%;
-  height: 136%;
+  inset: -20%;
+  opacity: 0.55;
+  filter: blur(90px);
+  background:
+    radial-gradient(
+      30% 26% at 24% 28%,
+      var(--atm-azul-claro) 0%,
+      transparent 70%
+    ),
+    radial-gradient(
+      28% 24% at 76% 34%,
+      var(--atm-lilas) 0%,
+      transparent 70%
+    ),
+    radial-gradient(
+      34% 26% at 52% 84%,
+      var(--atm-azul) 0%,
+      transparent 70%
+    );
 }
 
-/* Cada tema mostra a sua composicao */
-.fundo-claro {
-  display: block;
-}
-.fundo-escuro {
-  display: none;
-}
-.dark .fundo-claro {
-  display: none;
-}
-.dark .fundo-escuro {
-  display: block;
-}
-
-.parallax,
-.deriva {
-  will-change: transform;
-}
-
-/* Deriva continua: ciclos longos e em sentidos diferentes, para o
-   desenho nunca repetir a mesma combinacao. */
-@keyframes deriva-massa {
+/* Deriva longa e quase imperceptível. O desfoque é rasterizado uma vez e só
+   deslocado, então o custo por quadro é de composição, não de refiltragem.
+   O fundo é feito para ficar bonito parado: isto só tira a impressão de
+   papel de parede. */
+@keyframes atmosfera {
   from {
-    transform: translate3d(0, 0, 0) scale(1);
+    transform: translate3d(-1.5%, -1%, 0);
   }
   to {
-    transform: translate3d(-2.5%, 1.4%, 0) scale(1.035);
-  }
-}
-
-@keyframes deriva-rim {
-  from {
-    transform: translate3d(0, 0, 0) scale(1.02);
-  }
-  to {
-    transform: translate3d(2.2%, -1.8%, 0) scale(1);
-  }
-}
-
-@keyframes deriva-violeta {
-  from {
-    transform: translate3d(0, 0, 0) scale(1);
-  }
-  to {
-    transform: translate3d(1.6%, 2.2%, 0) scale(1.05);
-  }
-}
-
-/* Parallax: a rolagem desloca cada camada num ritmo diferente. */
-@keyframes parallax-fundo {
-  to {
-    transform: translate3d(0, -4%, 0);
-  }
-}
-
-@keyframes parallax-meio {
-  to {
-    transform: translate3d(0, -9%, 0);
-  }
-}
-
-@keyframes parallax-frente {
-  to {
-    transform: translate3d(0, -15%, 0);
+    transform: translate3d(1.5%, 1%, 0);
   }
 }
 
 @media (prefers-reduced-motion: no-preference) {
-  .deriva-massa {
-    animation: deriva-massa 38s ease-in-out infinite alternate;
-  }
-
-  .deriva-rim {
-    animation: deriva-rim 31s ease-in-out infinite alternate;
-  }
-
-  .deriva-violeta {
-    animation: deriva-violeta 25s ease-in-out infinite alternate;
-  }
-
-  /* O deslocamento por rolagem vive em CSS puro, sem JavaScript. Onde o
-     navegador nao suportar linha do tempo de scroll, resta a deriva. */
-  @supports (animation-timeline: scroll()) {
-    .parallax {
-      animation-timeline: scroll(root block);
-      animation-fill-mode: both;
-      animation-timing-function: linear;
-    }
-
-    .parallax-fundo {
-      animation-name: parallax-fundo;
-    }
-    .parallax-meio {
-      animation-name: parallax-meio;
-    }
-    .parallax-frente {
-      animation-name: parallax-frente;
-    }
+  .fundo-brilho {
+    animation: atmosfera 46s ease-in-out infinite alternate;
+    will-change: transform;
   }
 }
 
-/* No celular a composição perde a segunda curva: tela estreita não comporta
-   as duas sem virar mancha. Os clarões ficam, que são o que dá a cor. */
+/* Em tela estreita o desfoque de 90px custa caro e os clarões ficam grandes
+   demais para a largura: menos desfoque, manchas menores. */
 @media (max-width: 640px) {
-  .curva-interna {
-    display: none;
-  }
-
-  .fundo-svg {
+  .fundo-brilho {
     inset: -30%;
-    width: 160%;
-    height: 160%;
+    filter: blur(60px);
+    opacity: 0.45;
   }
 }
 /* Flutuação quase imperceptível das etiquetas sobre o mockup. Cada uma
