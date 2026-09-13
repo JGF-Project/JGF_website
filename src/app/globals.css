@@ -593,14 +593,16 @@ article[id^="projeto-"]:target {
   --atm-base-c: #071634;
   --atm-base-d: #0b1a3e;
 
-  /* As faixas. Escuras o bastante para não competirem com o texto, claras o
-     bastante para se verem como forma, e não como mancha. */
-  --onda-1a: #0b2249;
-  --onda-1b: #0d2a58;
-  --onda-2a: #0e2650;
-  --onda-2b: #123869;
-  --onda-3: #1a4176;
-  --onda-4: #112c5c;
+  /* As faixas. A mais clara para em #13417c por um motivo medido: acima disso
+     o texto secundário sobre o fundo cai abaixo do mínimo de contraste. A
+     separação entre elas é o que dá a leitura — da mais escura à mais clara
+     há 7,4 vezes de luminância contra a base. */
+  --onda-1a: #0b2554;
+  --onda-1b: #0f3268;
+  --onda-2a: #0a1f4a;
+  --onda-2b: #123a78;
+  --onda-3: #13417c;
+  --onda-4: #0d2a5e;
 
   /* As fontes de luz. Azul domina; o lilás entra em um ponto só. */
   --atm-luz-1: 96, 148, 255;
@@ -623,13 +625,6 @@ article[id^="projeto-"]:target {
   --atm-i6: 0.15;
   --atm-s1: 0.36;
   --atm-s2: 0.3;
-
-  /* Intensidade das três ondulações. Baixa de propósito: elas existem como
-     mudança de iluminação, e contraste forte entre uma curva e a seguinte é
-     justamente o que faria voltarem a parecer faixas empilhadas. */
-  --atm-c1: 0.16;
-  --atm-c2: 0.13;
-  --atm-c3: 0.11;
 
   background:
     /* --- fontes de luz --- */
@@ -710,9 +705,6 @@ article[id^="projeto-"]:target {
   --atm-i6: 0.028;
   --atm-s1: 0.03;
   --atm-s2: 0.026;
-  --atm-c1: 0.042;
-  --atm-c2: 0.034;
-  --atm-c3: 0.028;
 
   /* As mesmas faixas, no claro: azuis bem lavados sobre quase branco.
      No escuro a faixa pode escurecer à vontade, porque o texto é claro; aqui
@@ -728,9 +720,10 @@ article[id^="projeto-"]:target {
 
 /* --- As faixas em SVG ---
 
-   O desfoque é moderado de propósito: forte demais apaga a forma e devolve a
-   mancha; nenhum deixa a borda do caminho dura. Nesta faixa de valor a curva
-   se lê como faixa, mas a borda continua orgânica.
+   O desfoque é pequeno de propósito. A onda se lê pela nitidez da borda, não
+   pelo brilho do pico: a 22px a transição se espalhava por uns 66px e a forma
+   sumia; a 6px ela cabe em 18px e a mesma cor vira faixa. O pouco que sobra
+   só tira o serrilhado do caminho.
 
    O `slice` recorta nas laterais em vez de esticar, então a inclinação da
    diagonal é a mesma no desktop e no celular. O desenho é maior que a tela
@@ -740,69 +733,18 @@ article[id^="projeto-"]:target {
   inset: -8%;
   width: 116%;
   height: 116%;
-  filter: blur(22px);
-  opacity: 0.95;
+  filter: blur(6px);
+  opacity: 1;
 }
 
 /* No claro as faixas pesam muito mais: o texto é escuro, e cada camada
    escurecendo o fundo come contraste. A camada inteira cede. */
+/* No claro as faixas não têm como aparecer tanto: o texto é escuro, e cada
+   camada que escurece o fundo come contraste. Subir daqui derruba o texto
+   secundário abaixo do mínimo sem ganho visível — medido: 0.36 leva o
+   contraste a 4,40 e a amplitude de luz só de 1,20 para 1,25. */
 :root:not(.dark) .fundo-ondas {
-  opacity: 0.24;
-}
-
-/* --- As grandes ondulações difusas ---
-
-   A curva não é uma forma posta sobre o fundo: é o flanco de uma elipse
-   enorme, quase toda fora da tela. Só um trecho do arco atravessa a
-   viewport, e sobre uma elipse desse tamanho o arco é quase reto — daí a
-   curva larga e aberta, em vez de círculo.
-
-   O desfoque pesado é o que transforma a silhueta em transição de luz. Foi
-   aqui que a tentativa com SVG falhou: caminho fechado tem borda, e borda
-   vira faixa por mais suave que seja o preenchimento. Uma silhueta desfocada
-   em 130px não tem onde mostrar contorno.
-
-   O preenchimento é linear, não radial, para a curva ter um lado mais claro
-   e outro cedendo — é isso que lê como mudança de iluminação atravessando o
-   fundo, e não como mancha. */
-.fundo-vivo::before,
-.fundo-vivo::after {
-  content: "";
-  position: absolute;
-  border-radius: 50%;
-  pointer-events: none;
-}
-
-/* Curva principal, alta: o arco de baixo cruza o terço superior. */
-.fundo-vivo::before {
-  width: 196%;
-  height: 124%;
-  left: -52%;
-  top: -80%;
-  background: linear-gradient(
-    168deg,
-    rgba(var(--atm-luz-1), var(--atm-c1)) 0%,
-    rgba(var(--atm-luz-2), calc(var(--atm-c1) * 0.5)) 58%,
-    transparent 86%
-  );
-  filter: blur(120px);
-}
-
-/* Segunda transição, mais abaixo e vindo do outro lado: o arco de cima cruza
-   a faixa inferior. Vir de outra direção é o que evita as duas parecerem a
-   mesma onda repetida. */
-.fundo-vivo::after {
-  width: 214%;
-  height: 132%;
-  right: -74%;
-  bottom: -88%;
-  background: linear-gradient(
-    12deg,
-    rgba(var(--atm-lilas), var(--atm-c2)) 0%,
-    rgba(var(--atm-luz-4), calc(var(--atm-c2) * 0.48)) 62%,
-    transparent 88%
-  );
-  filter: blur(130px);
+  opacity: 0.26;
 }
 
 /* Camada de brilho: manchas muito desfocadas, quase fundidas à base. Elas
@@ -818,7 +760,7 @@ article[id^="projeto-"]:target {
 .fundo-brilho {
   position: absolute;
   inset: -60% -22%;
-  opacity: 0.6;
+  opacity: 0.32;
   filter: blur(110px);
   background:
     radial-gradient(
@@ -841,26 +783,6 @@ article[id^="projeto-"]:target {
       rgba(var(--atm-luz-2), 0.4) 0%,
       transparent 70%
     );
-}
-
-/* Terceira ondulação, no meio e bem mais discreta. Fica nesta camada, e não
-   nas duas de cima, porque esta se desloca com a rolagem: assim a curva do
-   meio atravessa a página conforme se desce, em vez de ficar parada na mesma
-   altura da tela. */
-.fundo-brilho::before {
-  content: "";
-  position: absolute;
-  width: 188%;
-  height: 46%;
-  left: -44%;
-  top: 36%;
-  border-radius: 50%;
-  background: linear-gradient(
-    174deg,
-    rgba(var(--atm-luz-3), var(--atm-c3)) 0%,
-    rgba(var(--atm-luz-1), calc(var(--atm-c3) * 0.45)) 60%,
-    transparent 88%
-  );
 }
 
 /* As manchas têm alfa fixo, que sobre branco pesa muito mais do que sobre
@@ -917,23 +839,12 @@ article[id^="projeto-"]:target {
     opacity: 0.5;
   }
 
-  /* Desfoque de 120px sobre um elemento quase duas vezes a tela custa caro em
-     aparelho fraco. Em tela estreita a curva já é bem mais larga que a
-     viewport, então menos desfoque não devolve contorno nenhum. */
-  .fundo-vivo::before {
-    filter: blur(80px);
-  }
-
-  .fundo-vivo::after {
-    filter: blur(85px);
-  }
-
-  /* Em tela estreita o `slice` já amplia muito o desenho, então as faixas
-     chegam mais largas e o desfoque pode ceder sem endurecer a borda. As
-     duas camadas mais discretas saem: com a largura recortada, quatro faixas
-     viram sobreposição em vez de composição. */
+  /* Em tela estreita o `slice` amplia o desenho, então a mesma borda já chega
+     mais larga em pixels: o desfoque cede junto para a faixa não voltar a
+     sumir. As duas camadas mais discretas saem — com a largura recortada,
+     quatro faixas viram sobreposição em vez de composição. */
   .fundo-ondas {
-    filter: blur(16px);
+    filter: blur(4px);
   }
 
   .onda-clara,

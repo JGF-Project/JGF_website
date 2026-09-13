@@ -27,32 +27,36 @@ export function AnimatedBackground() {
         focusable="false"
       >
         <defs>
-          {/* A cor some nas duas pontas de cada faixa, então ela se dissolve
-              no fundo em vez de terminar num corte. */}
-          <linearGradient id="onda-a" x1="0" y1="0" x2="1" y2="0.5">
-            <stop offset="0%" stopColor="var(--onda-1a)" stopOpacity="0" />
-            <stop offset="22%" stopColor="var(--onda-1a)" stopOpacity="0.9" />
-            <stop offset="62%" stopColor="var(--onda-1b)" stopOpacity="0.85" />
-            <stop offset="100%" stopColor="var(--onda-1b)" stopOpacity="0" />
+          {/* A cor cede só nos 12 por cento finais de cada ponta, o bastante
+              para a faixa não terminar num corte. Antes ela desaparecia por
+              quase metade do percurso, e o que sobrava cheio era pouco — parte
+              do motivo de a onda não se ler. */}
+          <linearGradient id="onda-a" x1="0" y1="0" x2="1" y2="0.45">
+            <stop offset="0%" stopColor="var(--onda-1a)" stopOpacity="0.15" />
+            <stop offset="12%" stopColor="var(--onda-1a)" stopOpacity="1" />
+            <stop offset="88%" stopColor="var(--onda-1b)" stopOpacity="1" />
+            <stop offset="100%" stopColor="var(--onda-1b)" stopOpacity="0.2" />
           </linearGradient>
 
-          <linearGradient id="onda-b" x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0%" stopColor="var(--onda-2a)" stopOpacity="0" />
-            <stop offset="26%" stopColor="var(--onda-2a)" stopOpacity="0.92" />
-            <stop offset="70%" stopColor="var(--onda-2b)" stopOpacity="0.8" />
-            <stop offset="100%" stopColor="var(--onda-2b)" stopOpacity="0" />
+          <linearGradient id="onda-b" x1="0" y1="0" x2="1" y2="0.9">
+            <stop offset="0%" stopColor="var(--onda-2a)" stopOpacity="0.15" />
+            <stop offset="14%" stopColor="var(--onda-2a)" stopOpacity="1" />
+            <stop offset="86%" stopColor="var(--onda-2b)" stopOpacity="1" />
+            <stop offset="100%" stopColor="var(--onda-2b)" stopOpacity="0.2" />
           </linearGradient>
 
           <linearGradient id="onda-c" x1="0.1" y1="0" x2="0.9" y2="1">
-            <stop offset="0%" stopColor="var(--onda-3)" stopOpacity="0" />
-            <stop offset="38%" stopColor="var(--onda-3)" stopOpacity="0.55" />
-            <stop offset="100%" stopColor="var(--onda-3)" stopOpacity="0" />
+            <stop offset="0%" stopColor="var(--onda-3)" stopOpacity="0.1" />
+            <stop offset="20%" stopColor="var(--onda-3)" stopOpacity="0.92" />
+            <stop offset="84%" stopColor="var(--onda-3)" stopOpacity="0.86" />
+            <stop offset="100%" stopColor="var(--onda-3)" stopOpacity="0.1" />
           </linearGradient>
 
           <linearGradient id="onda-d" x1="0" y1="0.2" x2="1" y2="0.8">
-            <stop offset="0%" stopColor="var(--onda-4)" stopOpacity="0" />
-            <stop offset="45%" stopColor="var(--onda-4)" stopOpacity="0.42" />
-            <stop offset="100%" stopColor="var(--onda-4)" stopOpacity="0" />
+            <stop offset="0%" stopColor="var(--onda-4)" stopOpacity="0.12" />
+            <stop offset="22%" stopColor="var(--onda-4)" stopOpacity="0.95" />
+            <stop offset="82%" stopColor="var(--onda-4)" stopOpacity="0.9" />
+            <stop offset="100%" stopColor="var(--onda-4)" stopOpacity="0.12" />
           </linearGradient>
         </defs>
 
