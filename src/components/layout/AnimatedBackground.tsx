@@ -1,23 +1,89 @@
 /**
- * Fundo atmosférico do site.
+ * Fundo do site: azul-marinho profundo com grandes ondulações diagonais.
  *
- * Não há forma desenhada aqui: o ambiente inteiro é gradiente. A base é um
- * degradê em diagonal, do azul profundo ao índigo, e por cima dela alguns
- * clarões radiais — azul médio, azul claro, azul-arroxeado e lilás — que
- * chegam a transparente bem antes de se encontrarem. É isso que evita
- * qualquer borda, faixa ou divisão visível entre as camadas.
+ * Três camadas, da mais funda para a mais rasa:
  *
- * A composição toda mora no CSS, em `.fundo-vivo` e `.fundo-brilho`: este
- * componente só existe para pôr os dois elementos na página, uma vez, na raiz
- * do layout. Por isso a página inteira acontece sobre o mesmo ambiente — as
- * seções não têm fundo próprio.
+ * 1. `.fundo-vivo` — a base. Azul-marinho escuro com clarões radiais, que dão
+ *    profundidade e variação de luz sem desenhar nada.
+ * 2. `.fundo-ondas` — as faixas. SVG inline, porque uma fita com duas bordas
+ *    curvas é um caminho; gradiente não desenha isso. Cada faixa entra e sai
+ *    pelas laterais, fora da tela, então nunca se vê onde ela começa.
+ * 3. `.fundo-brilho` — clarões difusos que acompanham a rolagem.
  *
- * A camada é fixa, fora do fluxo e sem eventos de ponteiro: nada da página
- * muda de posição por causa dela.
+ * O `viewBox` fixo com `slice` é o que faz as faixas manterem a mesma curva
+ * em qualquer tela: elas são recortadas nas bordas em vez de esticadas, e a
+ * diagonal não muda de inclinação entre o desktop e o celular.
+ *
+ * A camada é fixa, fora do fluxo e sem eventos de ponteiro, e vale para a
+ * página inteira — as seções não têm fundo próprio.
  */
 export function AnimatedBackground() {
   return (
     <div className="fundo-vivo" aria-hidden>
+      <svg
+        className="fundo-ondas"
+        viewBox="0 0 1440 900"
+        preserveAspectRatio="xMidYMid slice"
+        focusable="false"
+      >
+        <defs>
+          {/* A cor some nas duas pontas de cada faixa, então ela se dissolve
+              no fundo em vez de terminar num corte. */}
+          <linearGradient id="onda-a" x1="0" y1="0" x2="1" y2="0.5">
+            <stop offset="0%" stopColor="var(--onda-1a)" stopOpacity="0" />
+            <stop offset="22%" stopColor="var(--onda-1a)" stopOpacity="0.9" />
+            <stop offset="62%" stopColor="var(--onda-1b)" stopOpacity="0.85" />
+            <stop offset="100%" stopColor="var(--onda-1b)" stopOpacity="0" />
+          </linearGradient>
+
+          <linearGradient id="onda-b" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stopColor="var(--onda-2a)" stopOpacity="0" />
+            <stop offset="26%" stopColor="var(--onda-2a)" stopOpacity="0.92" />
+            <stop offset="70%" stopColor="var(--onda-2b)" stopOpacity="0.8" />
+            <stop offset="100%" stopColor="var(--onda-2b)" stopOpacity="0" />
+          </linearGradient>
+
+          <linearGradient id="onda-c" x1="0.1" y1="0" x2="0.9" y2="1">
+            <stop offset="0%" stopColor="var(--onda-3)" stopOpacity="0" />
+            <stop offset="38%" stopColor="var(--onda-3)" stopOpacity="0.55" />
+            <stop offset="100%" stopColor="var(--onda-3)" stopOpacity="0" />
+          </linearGradient>
+
+          <linearGradient id="onda-d" x1="0" y1="0.2" x2="1" y2="0.8">
+            <stop offset="0%" stopColor="var(--onda-4)" stopOpacity="0" />
+            <stop offset="45%" stopColor="var(--onda-4)" stopOpacity="0.42" />
+            <stop offset="100%" stopColor="var(--onda-4)" stopOpacity="0" />
+          </linearGradient>
+        </defs>
+
+        {/* Faixa mais funda: entra pela esquerda, alta, e desce cruzando a
+            tela até sair pela direita. */}
+        <path
+          d="M-260 196C120 62 520 178 880 318c260 101 460 178 820 128v306c-360 46-580-56-840-158-360-141-740-247-1120-113Z"
+          fill="url(#onda-a)"
+        />
+
+        {/* Faixa maior, na diagonal de cima à esquerda para baixo à direita. */}
+        <path
+          d="M-260 428C160 250 560 336 920 520c250 128 460 236 780 208v256c-320 30-560-98-820-232-360-186-720-274-1140-90Z"
+          fill="url(#onda-b)"
+        />
+
+        {/* Camada translúcida mais clara, acompanhando parte das curvas. */}
+        <path
+          className="onda-clara"
+          d="M-260 560C180 352 600 470 960 668c210 116 400 186 740 150v122H-260Z"
+          fill="url(#onda-c)"
+        />
+
+        {/* Faixa alta e discreta, para o topo não ficar chapado. */}
+        <path
+          className="onda-alta"
+          d="M-260 -60C140 46 520 -18 900 66c260 58 460 118 800 66v168c-340 44-600-30-860-92-380-90-740-26-1100-140Z"
+          fill="url(#onda-d)"
+        />
+      </svg>
+
       <div className="fundo-brilho" />
     </div>
   );

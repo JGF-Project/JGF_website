@@ -587,12 +587,20 @@ article[id^="projeto-"]:target {
   pointer-events: none;
   contain: strict;
 
-  /* Base: azul profundo virando azul médio e voltando, com um toque de
-     índigo no fim. Nada de preto puro. */
-  --atm-base-a: #0a1430;
-  --atm-base-b: #12244f;
-  --atm-base-c: #0e1a3e;
-  --atm-base-d: #141c48;
+  /* Base: azul-marinho escuro, o fundo sobre o qual as faixas aparecem. */
+  --atm-base-a: #06132f;
+  --atm-base-b: #0a1c42;
+  --atm-base-c: #071634;
+  --atm-base-d: #0b1a3e;
+
+  /* As faixas. Escuras o bastante para não competirem com o texto, claras o
+     bastante para se verem como forma, e não como mancha. */
+  --onda-1a: #0b2249;
+  --onda-1b: #0d2a58;
+  --onda-2a: #0e2650;
+  --onda-2b: #123869;
+  --onda-3: #1a4176;
+  --onda-4: #112c5c;
 
   /* As fontes de luz. Azul domina; o lilás entra em um ponto só. */
   --atm-luz-1: 96, 148, 255;
@@ -682,10 +690,10 @@ article[id^="projeto-"]:target {
 /* Tema claro: mesma construção, mesmos lugares, tudo lavado. Não é branco —
    é um azul-lilás bem claro, com contraste de sobra para o texto escuro. */
 :root:not(.dark) .fundo-vivo {
-  --atm-base-a: #f1f4ff;
-  --atm-base-b: #fafbff;
-  --atm-base-c: #f0f3ff;
-  --atm-base-d: #f4f5ff;
+  --atm-base-a: #f5f7ff;
+  --atm-base-b: #fcfdff;
+  --atm-base-c: #f4f6ff;
+  --atm-base-d: #f7f8ff;
 
   --atm-luz-1: 74, 122, 235;
   --atm-luz-2: 66, 118, 232;
@@ -705,9 +713,44 @@ article[id^="projeto-"]:target {
   --atm-c1: 0.042;
   --atm-c2: 0.034;
   --atm-c3: 0.028;
+
+  /* As mesmas faixas, no claro: azuis bem lavados sobre quase branco.
+     No escuro a faixa pode escurecer à vontade, porque o texto é claro; aqui
+     é o contrário, e faixa escura brigaria com o texto. Por isso elas ficam
+     bem mais discretas neste tema — a forma continua legível, o peso não. */
+  --onda-1a: #e4ecfd;
+  --onda-1b: #dae6fc;
+  --onda-2a: #e0e9fd;
+  --onda-2b: #d2e0fa;
+  --onda-3: #c9dbf9;
+  --onda-4: #ebf1fe;
 }
 
-/* --- As grandes ondulações ---
+/* --- As faixas em SVG ---
+
+   O desfoque é moderado de propósito: forte demais apaga a forma e devolve a
+   mancha; nenhum deixa a borda do caminho dura. Nesta faixa de valor a curva
+   se lê como faixa, mas a borda continua orgânica.
+
+   O `slice` recorta nas laterais em vez de esticar, então a inclinação da
+   diagonal é a mesma no desktop e no celular. O desenho é maior que a tela
+   para as pontas entrarem e saírem fora do quadro. */
+.fundo-ondas {
+  position: absolute;
+  inset: -8%;
+  width: 116%;
+  height: 116%;
+  filter: blur(22px);
+  opacity: 0.95;
+}
+
+/* No claro as faixas pesam muito mais: o texto é escuro, e cada camada
+   escurecendo o fundo come contraste. A camada inteira cede. */
+:root:not(.dark) .fundo-ondas {
+  opacity: 0.24;
+}
+
+/* --- As grandes ondulações difusas ---
 
    A curva não é uma forma posta sobre o fundo: é o flanco de uma elipse
    enorme, quase toda fora da tela. Só um trecho do arco atravessa a
@@ -883,6 +926,19 @@ article[id^="projeto-"]:target {
 
   .fundo-vivo::after {
     filter: blur(85px);
+  }
+
+  /* Em tela estreita o `slice` já amplia muito o desenho, então as faixas
+     chegam mais largas e o desfoque pode ceder sem endurecer a borda. As
+     duas camadas mais discretas saem: com a largura recortada, quatro faixas
+     viram sobreposição em vez de composição. */
+  .fundo-ondas {
+    filter: blur(16px);
+  }
+
+  .onda-clara,
+  .onda-alta {
+    display: none;
   }
 }
 /* Flutuação quase imperceptível das etiquetas sobre o mockup. Cada uma
