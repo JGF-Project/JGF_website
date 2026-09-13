@@ -563,14 +563,18 @@ article[id^="projeto-"]:target {
 /* ---------------------------------------------------------------
    Fundo atmosférico, atrás de todo o conteúdo.
 
-   Só gradiente: uma base em diagonal mais clarões radiais que se cruzam. Não
-   há forma desenhada, borda nem faixa — cada clarão chega a transparente bem
-   antes de encontrar o vizinho, então não dá para dizer onde um começa e o
-   outro termina.
+   Uma grande superfície azul iluminada por várias fontes difusas. Só
+   gradiente: não há forma desenhada, borda nem faixa — cada clarão chega a
+   transparente bem antes de encontrar o vizinho.
 
-   A camada é fixa, fora do fluxo e sem eventos de ponteiro, e vale para a
-   página inteira: as seções não têm fundo próprio, todas acontecem sobre
-   este mesmo ambiente.
+   O que tira a uniformidade não são os clarões, são os bolsões de sombra.
+   Com clarões sozinhos a luminância só sobe a partir da base, e o resultado
+   é um degradê parelho por mais camadas que se empilhem. Escurecer algumas
+   regiões é o que cria a variação de claro e escuro ao longo da tela.
+
+   A ordem das camadas importa: a primeira listada é pintada por cima. Os
+   clarões vêm antes das sombras, que vêm antes da base, então a sombra
+   modula o azul de baixo sem apagar a luz de cima.
 
    `contain: strict` prende pintura e layout aqui dentro, então o desfoque da
    camada de brilho não vaza nem cria barra de rolagem.
@@ -583,121 +587,206 @@ article[id^="projeto-"]:target {
   pointer-events: none;
   contain: strict;
 
-  /* Base em azul profundo, virando índigo na diagonal. Sem preto puro. */
-  --atm-base-a: #0c1636;
-  --atm-base-b: #101a44;
-  --atm-base-c: #151c52;
-  /* Os clarões: azul médio, azul claro, azul-arroxeado e lilás. */
-  --atm-azul: rgba(58, 112, 232, 0.32);
-  --atm-azul-claro: rgba(96, 156, 255, 0.2);
-  --atm-indigo: rgba(120, 102, 240, 0.28);
-  --atm-lilas: rgba(158, 138, 255, 0.16);
-  --atm-fundo-frio: rgba(44, 84, 196, 0.24);
+  /* Base: azul profundo virando azul médio e voltando, com um toque de
+     índigo no fim. Nada de preto puro. */
+  --atm-base-a: #0a1430;
+  --atm-base-b: #12244f;
+  --atm-base-c: #0e1a3e;
+  --atm-base-d: #141c48;
+
+  /* As fontes de luz. Azul domina; o lilás entra em um ponto só. */
+  --atm-luz-1: 96, 148, 255;
+  --atm-luz-2: 72, 132, 255;
+  --atm-luz-3: 88, 156, 255;
+  --atm-luz-4: 64, 112, 230;
+  --atm-lilas: 124, 110, 248;
+
+  /* Sombra: o mesmo azul da base, bem mais escuro. */
+  --atm-sombra: 5, 10, 28;
+
+  /* Os picos de luz ficam contidos porque o texto secundário passa por cima
+     deles; a amplitude entre claro e escuro vem das sombras, que podem ser
+     fortes sem custar contraste nenhum. */
+  --atm-i1: 0.3;
+  --atm-i2: 0.23;
+  --atm-i3: 0.2;
+  --atm-i4: 0.17;
+  --atm-i5: 0.18;
+  --atm-i6: 0.15;
+  --atm-s1: 0.36;
+  --atm-s2: 0.3;
 
   background:
+    /* --- fontes de luz --- */
     radial-gradient(
-      circle at 16% 18%,
-      var(--atm-azul) 0%,
-      transparent 46%
+      ellipse 52% 44% at 12% 12%,
+      rgba(var(--atm-luz-1), var(--atm-i1)) 0%,
+      rgba(var(--atm-luz-1), calc(var(--atm-i1) * 0.38)) 26%,
+      transparent 58%
     ),
     radial-gradient(
-      circle at 84% 24%,
-      var(--atm-indigo) 0%,
-      transparent 50%
+      ellipse 44% 40% at 88% 18%,
+      rgba(var(--atm-lilas), var(--atm-i2)) 0%,
+      rgba(var(--atm-lilas), calc(var(--atm-i2) * 0.4)) 30%,
+      transparent 60%
     ),
     radial-gradient(
-      circle at 68% 62%,
-      var(--atm-lilas) 0%,
+      ellipse 56% 38% at 62% 44%,
+      rgba(var(--atm-luz-2), var(--atm-i3)) 0%,
+      rgba(var(--atm-luz-2), calc(var(--atm-i3) * 0.38)) 28%,
+      transparent 56%
+    ),
+    radial-gradient(
+      ellipse 40% 46% at 20% 64%,
+      rgba(var(--atm-luz-3), var(--atm-i4)) 0%,
+      transparent 54%
+    ),
+    radial-gradient(
+      ellipse 50% 36% at 80% 78%,
+      rgba(var(--atm-luz-4), var(--atm-i5)) 0%,
+      transparent 56%
+    ),
+    radial-gradient(
+      ellipse 58% 30% at 44% 98%,
+      rgba(var(--atm-luz-2), var(--atm-i6)) 0%,
+      transparent 54%
+    ),
+    /* --- bolsões de sombra, por baixo da luz --- */
+    radial-gradient(
+      ellipse 46% 40% at 40% 26%,
+      rgba(var(--atm-sombra), var(--atm-s1)) 0%,
       transparent 52%
     ),
     radial-gradient(
-      circle at 34% 78%,
-      var(--atm-azul-claro) 0%,
-      transparent 48%
+      ellipse 38% 44% at 94% 56%,
+      rgba(var(--atm-sombra), var(--atm-s2)) 0%,
+      transparent 50%
     ),
-    radial-gradient(
-      circle at 50% 96%,
-      var(--atm-fundo-frio) 0%,
-      transparent 55%
-    ),
+    /* --- base --- */
     linear-gradient(
-      135deg,
+      160deg,
       var(--atm-base-a) 0%,
-      var(--atm-base-b) 48%,
-      var(--atm-base-c) 100%
+      var(--atm-base-b) 34%,
+      var(--atm-base-c) 66%,
+      var(--atm-base-d) 100%
     );
 }
 
 /* Tema claro: mesma construção, mesmos lugares, tudo lavado. Não é branco —
    é um azul-lilás bem claro, com contraste de sobra para o texto escuro. */
 :root:not(.dark) .fundo-vivo {
-  --atm-base-a: #f3f5ff;
+  --atm-base-a: #f1f4ff;
   --atm-base-b: #fafbff;
-  --atm-base-c: #f2f4ff;
-  --atm-azul: rgba(74, 122, 235, 0.062);
-  --atm-azul-claro: rgba(96, 156, 255, 0.05);
-  --atm-indigo: rgba(122, 104, 236, 0.055);
-  --atm-lilas: rgba(150, 132, 250, 0.042);
-  --atm-fundo-frio: rgba(64, 108, 214, 0.042);
+  --atm-base-c: #f0f3ff;
+  --atm-base-d: #f4f5ff;
+
+  --atm-luz-1: 74, 122, 235;
+  --atm-luz-2: 66, 118, 232;
+  --atm-luz-3: 86, 146, 244;
+  --atm-luz-4: 70, 112, 216;
+  --atm-lilas: 122, 104, 236;
+  --atm-sombra: 92, 108, 158;
+
+  --atm-i1: 0.052;
+  --atm-i2: 0.04;
+  --atm-i3: 0.036;
+  --atm-i4: 0.032;
+  --atm-i5: 0.032;
+  --atm-i6: 0.028;
+  --atm-s1: 0.03;
+  --atm-s2: 0.026;
 }
 
-/* Camada de brilho: três manchas muito desfocadas, quase fundidas à base.
-   Elas existem para tirar a regularidade dos clarões de baixo, não para
+/* Camada de brilho: manchas muito desfocadas, quase fundidas à base. Elas
+   existem para quebrar a regularidade dos clarões de baixo, não para
    aparecer — daí o desfoque grande e a opacidade baixa.
 
-   O recuo negativo tira as bordas da mancha de dentro da tela: desfoque
-   deixa a borda do gradiente visível como um halo, e com a mancha começando
-   fora ninguém a vê. */
+   É mais alta que a tela de propósito: a rolagem a desloca, então trechos
+   diferentes da página pegam quantidades diferentes de luz. Sem isso, uma
+   camada fixa mostraria exatamente a mesma iluminação do topo ao rodapé.
+
+   O recuo negativo também tira as bordas da mancha de dentro da tela:
+   desfoque deixa a borda do gradiente visível como halo. */
 .fundo-brilho {
   position: absolute;
-  inset: -20%;
-  opacity: 0.55;
-  filter: blur(90px);
+  inset: -60% -22%;
+  opacity: 0.6;
+  filter: blur(110px);
   background:
     radial-gradient(
-      30% 26% at 24% 28%,
-      var(--atm-azul-claro) 0%,
+      ellipse 30% 14% at 22% 18%,
+      rgba(var(--atm-luz-3), 0.5) 0%,
       transparent 70%
     ),
     radial-gradient(
-      28% 24% at 76% 34%,
-      var(--atm-lilas) 0%,
+      ellipse 26% 12% at 76% 34%,
+      rgba(var(--atm-lilas), 0.42) 0%,
       transparent 70%
     ),
     radial-gradient(
-      34% 26% at 52% 84%,
-      var(--atm-azul) 0%,
+      ellipse 34% 15% at 46% 56%,
+      rgba(var(--atm-luz-1), 0.45) 0%,
+      transparent 70%
+    ),
+    radial-gradient(
+      ellipse 28% 13% at 68% 80%,
+      rgba(var(--atm-luz-2), 0.4) 0%,
       transparent 70%
     );
 }
 
-/* Deriva longa e quase imperceptível. O desfoque é rasterizado uma vez e só
-   deslocado, então o custo por quadro é de composição, não de refiltragem.
-   O fundo é feito para ficar bonito parado: isto só tira a impressão de
-   papel de parede. */
+/* As manchas têm alfa fixo, que sobre branco pesa muito mais do que sobre
+   azul profundo. A camada inteira cede no tema claro. */
+:root:not(.dark) .fundo-brilho {
+  opacity: 0.32;
+}
+
+/* Deriva longa e quase imperceptível, em `translate`. */
 @keyframes atmosfera {
   from {
-    transform: translate3d(-1.5%, -1%, 0);
+    translate: -1.5% -1%;
   }
   to {
-    transform: translate3d(1.5%, 1%, 0);
+    translate: 1.5% 1%;
+  }
+}
+
+/* Deslocamento pela rolagem, em `transform`. São propriedades separadas, e é
+   isso que deixa as duas animações conviverem no mesmo elemento sem uma
+   sobrescrever a outra. */
+@keyframes luz-rolagem {
+  to {
+    transform: translateY(-22%);
   }
 }
 
 @media (prefers-reduced-motion: no-preference) {
   .fundo-brilho {
     animation: atmosfera 46s ease-in-out infinite alternate;
-    will-change: transform;
+    will-change: translate;
+  }
+
+  @supports (animation-timeline: scroll()) {
+    .fundo-brilho {
+      animation-name: atmosfera, luz-rolagem;
+      animation-duration: 46s, auto;
+      animation-timing-function: ease-in-out, linear;
+      animation-iteration-count: infinite, 1;
+      animation-direction: alternate, normal;
+      animation-fill-mode: none, both;
+      animation-timeline: auto, scroll(root block);
+      will-change: translate, transform;
+    }
   }
 }
 
-/* Em tela estreita o desfoque de 90px custa caro e os clarões ficam grandes
+/* Em tela estreita o desfoque de 110px custa caro e as manchas ficam grandes
    demais para a largura: menos desfoque, manchas menores. */
 @media (max-width: 640px) {
   .fundo-brilho {
-    inset: -30%;
-    filter: blur(60px);
-    opacity: 0.45;
+    inset: -50% -34%;
+    filter: blur(70px);
+    opacity: 0.5;
   }
 }
 /* Flutuação quase imperceptível das etiquetas sobre o mockup. Cada uma
