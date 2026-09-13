@@ -1,12 +1,18 @@
 /**
  * Fundo animado do site.
  *
- * São formas SVG desenhadas, não gradientes soltos: no escuro, uma grande
- * formação luminosa em tigela; no claro, arcos ondulados aninhados com
- * respiro entre eles. Cada camada tem sua própria deriva e seu próprio
- * ritmo de parallax na rolagem, o que cria profundidade.
+ * Um ambiente só, contínuo, atrás de todas as seções: base em azul profundo,
+ * grandes clarões radiais e duas curvas largas atravessando a tela. Nada de
+ * bloco de cor por seção — a página inteira acontece sobre esta camada.
  *
- * A camada é fixa, fora do fluxo e sem eventos de ponteiro: nada da
+ * As formas são desenhadas em SVG, com gradientes que chegam a zero antes da
+ * borda de cada caminho. É o que dá o contorno difuso da referência sem
+ * precisar de `filter: blur()`, que num elemento do tamanho da viewport
+ * custaria caro a cada quadro.
+ *
+ * Cada camada tem sua própria deriva e seu próprio ritmo de parallax na
+ * rolagem, o que cria profundidade e evita a impressão de papel de parede
+ * parado. A camada é fixa, fora do fluxo e sem eventos de ponteiro: nada da
  * página muda de posição por causa dela.
  */
 export function AnimatedBackground() {
@@ -19,9 +25,8 @@ export function AnimatedBackground() {
 }
 
 /* ---------------------------------------------------------------
-   ESCURO — uma enorme formação luminosa azulada, de forma irregular,
-   com o brilho concentrado numa faixa curva e as bordas cedendo ao
-   quase preto.
+   ESCURO — azul profundo com clarões azul e lavanda, e duas curvas
+   largas cruzando a tela.
    --------------------------------------------------------------- */
 function FundoEscuro() {
   return (
@@ -32,71 +37,101 @@ function FundoEscuro() {
       focusable="false"
     >
       <defs>
-        {/* Massa principal: azul elétrico no núcleo, cedendo nas pontas */}
-        <radialGradient id="jgf-massa" cx="50%" cy="42%" r="62%">
-          <stop offset="0%" stopColor="#2c5cf0" stopOpacity="0.72" />
-          <stop offset="42%" stopColor="#1e3fb8" stopOpacity="0.42" />
-          <stop offset="72%" stopColor="#12235f" stopOpacity="0.2" />
-          <stop offset="100%" stopColor="#05090f" stopOpacity="0" />
-        </radialGradient>
-
-        {/* A faixa curva que desenha a borda da tigela */}
-        <linearGradient id="jgf-rim" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="#9fc3ff" stopOpacity="0.34" />
-          <stop offset="46%" stopColor="#5f86e8" stopOpacity="0.14" />
-          <stop offset="100%" stopColor="#05090f" stopOpacity="0" />
+        {/* Base: o azul não é chapado, vai de marinho a índigo na diagonal */}
+        <linearGradient id="jgf-base" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stopColor="#0e1b4d" />
+          <stop offset="45%" stopColor="#0a1234" />
+          <stop offset="100%" stopColor="#0c1440" />
         </linearGradient>
 
-        {/* Sopro de roxo, discreto, só para o azul não ficar chapado */}
-        <radialGradient id="jgf-violeta" cx="50%" cy="50%" r="50%">
-          <stop offset="0%" stopColor="#6d5cff" stopOpacity="0.3" />
-          <stop offset="100%" stopColor="#6d5cff" stopOpacity="0" />
+        {/* Clarão principal, alto à esquerda */}
+        <radialGradient id="jgf-clarao-a" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stopColor="#3b74ff" stopOpacity="0.36" />
+          <stop offset="45%" stopColor="#2a52d8" stopOpacity="0.17" />
+          <stop offset="100%" stopColor="#2a52d8" stopOpacity="0" />
         </radialGradient>
 
-        {/* Escurecimento das quinas, que dá a profundidade da referência */}
-        <radialGradient id="jgf-vinheta" cx="50%" cy="45%" r="72%">
-          <stop offset="55%" stopColor="#05090f" stopOpacity="0" />
-          <stop offset="100%" stopColor="#020409" stopOpacity="0.92" />
+        {/* Lavanda à direita: é ele que tira o azul do tom único */}
+        <radialGradient id="jgf-clarao-b" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stopColor="#7d68ff" stopOpacity="0.34" />
+          <stop offset="50%" stopColor="#5b4ae0" stopOpacity="0.16" />
+          <stop offset="100%" stopColor="#5b4ae0" stopOpacity="0" />
+        </radialGradient>
+
+        {/* Azul frio embaixo, para o rodapé não cair no preto */}
+        <radialGradient id="jgf-clarao-c" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stopColor="#1f4fd0" stopOpacity="0.28" />
+          <stop offset="100%" stopColor="#1f4fd0" stopOpacity="0" />
+        </radialGradient>
+
+        {/* Curva larga: a cor mora no meio da faixa e some nas duas pontas,
+            então o caminho não mostra onde começa nem onde termina. */}
+        <linearGradient id="jgf-curva-a" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#6f9dff" stopOpacity="0" />
+          <stop offset="42%" stopColor="#6f9dff" stopOpacity="0.2" />
+          <stop offset="100%" stopColor="#6f9dff" stopOpacity="0" />
+        </linearGradient>
+
+        <linearGradient id="jgf-curva-b" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#8f7bff" stopOpacity="0" />
+          <stop offset="50%" stopColor="#8f7bff" stopOpacity="0.2" />
+          <stop offset="100%" stopColor="#8f7bff" stopOpacity="0" />
+        </linearGradient>
+
+        {/* Escurecimento das quinas: é ele que segura a leitura do conteúdo */}
+        <radialGradient id="jgf-vinheta" cx="50%" cy="45%" r="75%">
+          <stop offset="50%" stopColor="#060a1c" stopOpacity="0" />
+          <stop offset="100%" stopColor="#050817" stopOpacity="0.82" />
         </radialGradient>
       </defs>
 
-      {/* Camada de trás: a massa, com a deriva mais lenta de todas */}
+      <rect x="-200" y="-200" width="1840" height="1300" fill="url(#jgf-base)" />
+
+      {/* Camada de trás: os clarões grandes, com a deriva mais lenta */}
       <g className="parallax parallax-fundo">
         <g className="deriva deriva-massa">
-          <path
-            d="M-380 250C-120 60 260 -70 720 -70s1100 130 1340 320c150 120 190 330 60 520-140 200-520 330-1400 330S-460 1070-560 830c-90-215-40-435 180-580Z"
-            fill="url(#jgf-massa)"
-          />
+          <ellipse cx="210" cy="140" rx="760" ry="600" fill="url(#jgf-clarao-a)" />
+          <ellipse cx="700" cy="1010" rx="900" ry="520" fill="url(#jgf-clarao-c)" />
         </g>
       </g>
 
-      {/* Camada do meio: a borda curva luminosa, com deriva própria */}
+      {/* Camada do meio: a curva larga que atravessa a tela */}
       <g className="parallax parallax-meio">
         <g className="deriva deriva-rim">
           <path
-            d="M-260 940C-190 590 60 330 420 250c210-47 430-30 640 40 300 100 500 320 540 650 8 68 8 68-40 68H-220c-48 0-48 0-40-68Z"
-            fill="url(#jgf-rim)"
+            d="M-320 700C-40 430 300 250 760 300c380 41 640 250 1000 190v300c-360 60-620-150-1000-190-460-50-800 130-1080 400Z"
+            fill="url(#jgf-curva-a)"
           />
         </g>
       </g>
 
-      {/* Camada da frente: o sopro violeta, o mais rápido dos três */}
+      {/* Camada da frente: lavanda e a segunda curva, as mais rápidas */}
       <g className="parallax parallax-frente">
         <g className="deriva deriva-violeta">
-          <ellipse cx="1120" cy="230" rx="430" ry="330" fill="url(#jgf-violeta)" />
+          <ellipse cx="1290" cy="380" rx="620" ry="520" fill="url(#jgf-clarao-b)" />
+          <path
+            className="curva-interna"
+            d="M-260 240C60 70 420 20 820 120c320 80 540 250 880 210v260c-340 40-560-130-880-210-400-100-760-50-1080 120Z"
+            fill="url(#jgf-curva-b)"
+          />
         </g>
       </g>
 
-      {/* Vinheta parada: é ela que segura a leitura do conteúdo */}
-      <rect x="-200" y="-200" width="1840" height="1300" fill="url(#jgf-vinheta)" />
+      {/* Vinheta parada, por cima de tudo */}
+      <rect
+        x="-200"
+        y="-200"
+        width="1840"
+        height="1300"
+        fill="url(#jgf-vinheta)"
+      />
     </svg>
   );
 }
 
 /* ---------------------------------------------------------------
-   CLARO — arcos ondulados aninhados subindo das bordas, com respiro
-   branco entre eles. O branco continua predominante: as formas só
-   encostam no fundo, nunca o dominam.
+   CLARO — mesma linguagem, mesmo desenho, mas lavado: o branco
+   continua predominante e as formas só encostam no fundo.
    --------------------------------------------------------------- */
 function FundoClaro() {
   return (
@@ -107,52 +142,89 @@ function FundoClaro() {
       focusable="false"
     >
       <defs>
-        {/* A cor mora na crista e cede para baixo, como na referência */}
-        <linearGradient id="jgf-onda-a" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="#5ec9b7" stopOpacity="0.5" />
-          <stop offset="30%" stopColor="#8fdcd0" stopOpacity="0.26" />
-          <stop offset="100%" stopColor="#d8f3ee" stopOpacity="0" />
+        <linearGradient id="jgf-base-claro" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stopColor="#f3f6ff" />
+          <stop offset="50%" stopColor="#fbfcff" />
+          <stop offset="100%" stopColor="#f1f5ff" />
         </linearGradient>
 
-        <linearGradient id="jgf-onda-b" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="#56d7fd" stopOpacity="0.4" />
-          <stop offset="34%" stopColor="#9fe6f7" stopOpacity="0.2" />
-          <stop offset="100%" stopColor="#e6f7fb" stopOpacity="0" />
+        <radialGradient id="jgf-clarao-a-claro" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stopColor="#5b8cff" stopOpacity="0.12" />
+          <stop offset="100%" stopColor="#5b8cff" stopOpacity="0" />
+        </radialGradient>
+
+        <radialGradient id="jgf-clarao-b-claro" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stopColor="#8f7bff" stopOpacity="0.085" />
+          <stop offset="100%" stopColor="#8f7bff" stopOpacity="0" />
+        </radialGradient>
+
+        <radialGradient id="jgf-clarao-c-claro" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stopColor="#4f9bff" stopOpacity="0.09" />
+          <stop offset="100%" stopColor="#4f9bff" stopOpacity="0" />
+        </radialGradient>
+
+        <linearGradient id="jgf-curva-a-claro" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#6f9dff" stopOpacity="0" />
+          <stop offset="42%" stopColor="#6f9dff" stopOpacity="0.1" />
+          <stop offset="100%" stopColor="#6f9dff" stopOpacity="0" />
         </linearGradient>
 
-        <linearGradient id="jgf-onda-c" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="#7fd8c8" stopOpacity="0.46" />
-          <stop offset="38%" stopColor="#b6e9e0" stopOpacity="0.18" />
-          <stop offset="100%" stopColor="#ffffff" stopOpacity="0" />
+        <linearGradient id="jgf-curva-b-claro" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#9c8bff" stopOpacity="0" />
+          <stop offset="50%" stopColor="#9c8bff" stopOpacity="0.075" />
+          <stop offset="100%" stopColor="#9c8bff" stopOpacity="0" />
         </linearGradient>
       </defs>
 
-      {/* Arco externo: o maior, quase saindo pelos lados */}
+      <rect
+        x="-200"
+        y="-200"
+        width="1840"
+        height="1300"
+        fill="url(#jgf-base-claro)"
+      />
+
       <g className="parallax parallax-fundo">
         <g className="deriva deriva-massa">
-          <path
-            d="M-160 1000C-40 610 190 350 470 322c132-14 176 76 250 76s118-90 250-76c280 28 510 288 630 678Z"
-            fill="url(#jgf-onda-a)"
+          <ellipse
+            cx="210"
+            cy="140"
+            rx="760"
+            ry="600"
+            fill="url(#jgf-clarao-a-claro)"
+          />
+          <ellipse
+            cx="700"
+            cy="1010"
+            rx="900"
+            ry="520"
+            fill="url(#jgf-clarao-c-claro)"
           />
         </g>
       </g>
 
-      {/* Arco do meio */}
       <g className="parallax parallax-meio">
         <g className="deriva deriva-rim">
           <path
-            d="M-60 1000C60 700 260 500 540 480c96-7 130 58 180 58s84-65 180-58c280 20 480 220 600 520Z"
-            fill="url(#jgf-onda-b)"
+            d="M-320 700C-40 430 300 250 760 300c380 41 640 250 1000 190v300c-360 60-620-150-1000-190-460-50-800 130-1080 400Z"
+            fill="url(#jgf-curva-a-claro)"
           />
         </g>
       </g>
 
-      {/* Arco interno: escondido no celular, onde a tela é estreita */}
-      <g className="parallax parallax-frente onda-interna">
+      <g className="parallax parallax-frente">
         <g className="deriva deriva-violeta">
+          <ellipse
+            cx="1290"
+            cy="380"
+            rx="620"
+            ry="520"
+            fill="url(#jgf-clarao-b-claro)"
+          />
           <path
-            d="M120 1000c110-226 250-370 450-384 70-5 96 44 150 44s80-49 150-44c200 14 340 158 450 384Z"
-            fill="url(#jgf-onda-c)"
+            className="curva-interna"
+            d="M-260 240C60 70 420 20 820 120c320 80 540 250 880 210v260c-340 40-560-130-880-210-400-100-760-50-1080 120Z"
+            fill="url(#jgf-curva-b-claro)"
           />
         </g>
       </g>

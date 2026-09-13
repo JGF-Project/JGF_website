@@ -28,7 +28,9 @@
    --------------------------------------------------------------- */
 
 :root {
-  --background: #fcfcfc;
+  /* Quase branco, com um sopro de azul: a mesma linguagem do tema escuro,
+     lavada o bastante para o texto continuar com todo o contraste. */
+  --background: #fafbff;
   --surface: #f1f5f7;
   --surface-2: #e4edf1;
   --panel: #ffffff;
@@ -71,7 +73,10 @@
 }
 
 .dark {
-  --background: #05090f;
+  /* Azul profundo, não preto: é a base do ambiente contínuo que o fundo
+     animado desenha por cima. Só o fundo da página muda de tom — painéis,
+     cards e a barra seguem com as cores que já tinham. */
+  --background: #080f26;
   --surface: #0a1014;
   --surface-2: #112b33;
   --panel: #080d12;
@@ -690,10 +695,10 @@ article[id^="projeto-"]:target {
   }
 }
 
-/* No celular a composicao perde a camada da frente: tela estreita nao
-   comporta tres arcos sem virar mancha. */
+/* No celular a composição perde a segunda curva: tela estreita não comporta
+   as duas sem virar mancha. Os clarões ficam, que são o que dá a cor. */
 @media (max-width: 640px) {
-  .onda-interna {
+  .curva-interna {
     display: none;
   }
 
