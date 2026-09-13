@@ -25,12 +25,9 @@ export default function Home() {
 
       <Header />
 
-      {/* O cabeçalho é fixo, então ele não ocupa espaço no fluxo. O recuo aqui
-          devolve exatamente a faixa que ele cobre — 0.75rem de folga mais
-          3.5rem de altura no celular, 1rem mais 4rem a partir de sm, e um
-          respiro igual embaixo — para a imagem do carrossel começar abaixo da
-          barra em vez de passar por trás dela. */}
-      <main id="conteudo" className="flex-1 pt-20 sm:pt-24">
+      {/* Sem recuo no topo: a barra é grudenta e ocupa espaço no fluxo, então
+          o conteúdo já começa exatamente onde ela termina. */}
+      <main id="conteudo" className="flex-1">
         {/* Serviços sobe para logo depois da faixa de abertura: é o encaixe
             da referência, em que a fileira de cards aparece grudada no
             carrossel, antes de qualquer bloco longo de texto. */}

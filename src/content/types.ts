@@ -9,6 +9,15 @@
 export interface NavItem {
   label: string;
   href: string;
+  /**
+   * De onde sai o painel de subitens. Vazio significa link simples — nem todo
+   * item vira menu, só onde a lista ajuda a entender o que existe.
+   *
+   * É o nome da fonte, não a lista em si: os subitens são montados a partir do
+   * conteúdo da própria seção, então acrescentar um serviço ou um projeto
+   * atualiza o menu sozinho, sem repetir texto aqui.
+   */
+  menu?: "servicos" | "projetos";
 }
 
 

@@ -278,32 +278,36 @@
 
   /* Barra flutuante. O desfoque existe porque ela passa por cima de
      conteúdo em movimento: sem ele o texto embaixo atravessa a barra. */
-  /* Fundo opaco, sem transparência: a barra passa por cima do conteúdo ao
-     rolar, e deixar a imagem aparecer por trás dela embaralhava a leitura. */
-  .nav-float {
+  /* Barra reta, de ponta a ponta, encostada no topo. O fundo usa --panel:
+     branco no tema claro, o mesmo escuro de antes no tema escuro. Ela está no
+     fluxo, grudenta, então o conteúdo começa exatamente onde ela termina, sem
+     compensação de espaço em lugar nenhum. */
+  .nav-barra {
+    position: sticky;
+    top: 0;
+    z-index: 50;
     background: var(--panel);
-    border: 1px solid var(--border);
-    border-radius: var(--r-pill);
-    box-shadow: var(--sombra-flutuante);
-    transition:
-      box-shadow 0.35s ease,
-      border-color 0.35s ease;
+    border-bottom: 1px solid var(--border);
+    transition: box-shadow 0.3s ease;
   }
 
-  /* Ao rolar, a barra se descola mais do fundo. */
-  .nav-float[data-rolado="true"] {
-    border-color: var(--border-forte);
-    box-shadow: var(--sombra-elevada);
+  /* Ao rolar, a barra ganha sombra e se descola do que passa por baixo. */
+  .nav-barra[data-rolado="true"] {
+    box-shadow: var(--sombra-flutuante);
   }
 
   /* Item de navegação em pílula, com o ativo marcado por preenchimento. */
   .nav-item {
     position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
     border-radius: var(--r-pill);
-    padding: 0.5rem 0.9rem;
+    padding: 0.5rem 0.7rem;
     font-size: 0.8125rem;
     font-weight: 500;
     color: var(--muted);
+    white-space: nowrap;
     transition:
       color 0.22s ease,
       background-color 0.22s ease;
@@ -317,6 +321,163 @@
   .nav-item[data-ativo="true"] {
     color: var(--foreground);
     background: color-mix(in srgb, var(--foreground) 9%, transparent);
+  }
+
+  .nav-seta {
+    width: 0.8rem;
+    height: 0.8rem;
+    opacity: 0.7;
+    transition: rotate 0.22s ease;
+  }
+
+  /* --- Painel que abre ao pairar sobre o item ---
+     Abrir é `:hover` e `:focus-within` no CSS, não estado no React. Assim não
+     existe temporizador para se desencontrar do cursor, e quem navega por
+     teclado abre o painel só de chegar nele com Tab.
+
+     O painel mora dentro do grupo, então pairar sobre ele ainda é pairar
+     sobre o item: ele não se fecha enquanto o cursor estiver em qualquer um
+     dos dois. */
+  .nav-grupo {
+    position: relative;
+  }
+
+  .nav-grupo:hover .nav-seta,
+  .nav-grupo:focus-within .nav-seta {
+    rotate: 180deg;
+  }
+
+  .nav-painel {
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    z-index: 60;
+    /* O recuo é uma ponte invisível: sem ele, o cursor sairia do grupo no vão
+       entre o item e o card, e o painel fecharia no meio do caminho. */
+    padding-top: 0.55rem;
+    translate: -50% 6px;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition:
+      opacity 0.2s ease,
+      translate 0.2s ease,
+      visibility 0s linear 0.2s;
+  }
+
+  .nav-grupo:focus-within .nav-painel {
+    translate: -50% 0;
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    transition:
+      opacity 0.2s ease,
+      translate 0.2s ease,
+      visibility 0s;
+  }
+
+  /* Só onde existe cursor de verdade: em tela de toque o `:hover` gruda depois
+     do toque e o painel ficaria aberto sem ninguém ter pedido. */
+  @media (hover: hover) {
+    .nav-grupo:hover .nav-painel {
+      translate: -50% 0;
+      opacity: 1;
+      visibility: visible;
+      pointer-events: auto;
+      transition:
+        opacity 0.2s ease,
+        translate 0.2s ease,
+        visibility 0s;
+    }
+  }
+
+  .nav-painel-card {
+    width: max-content;
+    max-width: min(24rem, calc(100vw - 2rem));
+    border: 1px solid var(--border);
+    border-radius: var(--r-panel);
+    background: var(--panel);
+    box-shadow: var(--sombra-elevada);
+    padding: 0.4rem;
+  }
+
+  .nav-sub {
+    display: flex;
+    flex-direction: column;
+    gap: 0.1rem;
+    border-radius: var(--r-card);
+    padding: 0.6rem 0.75rem;
+    transition: background-color 0.18s ease;
+  }
+
+  .nav-sub:hover {
+    background: color-mix(in srgb, var(--foreground) 6%, transparent);
+  }
+
+  .nav-sub-titulo {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--foreground);
+  }
+
+  .nav-sub-apoio {
+    font-size: 0.78rem;
+    line-height: 1.45;
+    color: var(--muted);
+  }
+
+  /* --- Menu do celular ---
+     Sem cursor para pairar, o painel vira sanfona que abre no toque. */
+  .nav-mobile {
+    border-bottom: 1px solid var(--border);
+    background: var(--panel);
+    max-height: calc(100dvh - 3.5rem);
+    overflow-y: auto;
+  }
+
+  .nav-item-mobile {
+    justify-content: space-between;
+    border-radius: var(--r-card);
+    padding: 0.75rem 0.9rem;
+    font-size: 1rem;
+    text-align: left;
+  }
+
+  .nav-item-mobile .nav-seta[data-aberta="true"] {
+    rotate: 180deg;
+  }
+
+  /* De 0fr a 1fr: a linha cresce até a altura real da lista, sem precisar
+     adivinhar um max-height que ora corta, ora deixa sobra. */
+  .nav-sanfona {
+    display: grid;
+    grid-template-rows: 0fr;
+    opacity: 0;
+    transition:
+      grid-template-rows 0.28s cubic-bezier(0.22, 1, 0.36, 1),
+      opacity 0.2s ease;
+  }
+
+  .nav-sanfona[data-aberta="true"] {
+    grid-template-rows: 1fr;
+    opacity: 1;
+  }
+
+  .nav-sanfona-interna {
+    overflow: hidden;
+    min-height: 0;
+  }
+
+  .nav-sub-mobile {
+    padding: 0.55rem 0.75rem;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .nav-painel,
+    .nav-sanfona,
+    .nav-seta {
+      transition: none;
+    }
   }
 
   /* Luz de ambiente: dá profundidade ao fundo sem virar gradiente óbvio. */
@@ -1221,6 +1382,9 @@ select.previa-campo option {
 }
 
 .servico-botao {
+  /* O menu da navbar aponta direto para cada cartão, então ele precisa do
+     próprio recuo de âncora: sem isto, o alvo pararia atrás da barra. */
+  scroll-margin-top: 7rem;
   display: flex;
   width: 100%;
   height: 100%;

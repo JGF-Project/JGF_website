@@ -1,6 +1,6 @@
 "use client";
 
-import { useId, useState } from "react";
+import { useEffect, useState } from "react";
 import { Container } from "@/components/ui/Container";
 import { Reveal } from "@/components/ui/Reveal";
 import { serviceIcons, GlobeIcon, PlusIcon } from "@/components/ui/icons";
@@ -20,7 +20,24 @@ import { content } from "@/content";
 export function Services() {
   const { services } = content;
   const [aberto, setAberto] = useState<string | null>(null);
-  const idBase = useId();
+
+  /**
+   * O menu da navbar aponta para `#servico-<id>`. Chegar por ali abre o
+   * serviço correspondente, em vez de só rolar até a fileira.
+   *
+   * Só `hashchange`, não a âncora já presente ao abrir a página: o HTML é
+   * gerado na build, sem acesso ao hash, e abrir um item já na primeira
+   * renderização do cliente não bateria com o que veio do servidor.
+   */
+  useEffect(() => {
+    const aoTrocar = () => {
+      const id = window.location.hash.replace("#servico-", "");
+      if (services.items.some((s) => s.id === id)) setAberto(id);
+    };
+
+    window.addEventListener("hashchange", aoTrocar);
+    return () => window.removeEventListener("hashchange", aoTrocar);
+  }, [services.items]);
 
   const servicoAberto = services.items.find((s) => s.id === aberto) ?? null;
 
@@ -49,11 +66,11 @@ export function Services() {
               <Reveal key={service.id} delay={i * 70} className="servicos-celula">
                 <button
                   type="button"
-                  id={`${idBase}-${service.id}`}
+                  id={`servico-${service.id}`}
                   className="servico-botao edge-glow"
                   data-aberto={estaAberto}
                   aria-expanded={estaAberto}
-                  aria-controls={`${idBase}-painel`}
+                  aria-controls="servicos-painel"
                   onClick={() =>
                     setAberto((atual) =>
                       atual === service.id ? null : service.id,
@@ -79,12 +96,12 @@ export function Services() {
             o que permite animar até a altura do conteúdo sem chutar um
             max-height. */}
         <div
-          id={`${idBase}-painel`}
+          id="servicos-painel"
           className="servico-painel"
           data-aberto={Boolean(servicoAberto)}
           role="region"
           aria-labelledby={
-            servicoAberto ? `${idBase}-${servicoAberto.id}` : undefined
+            servicoAberto ? `servico-${servicoAberto.id}` : undefined
           }
         >
           <div className="servico-painel-interno">
