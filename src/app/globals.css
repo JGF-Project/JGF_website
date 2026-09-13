@@ -607,14 +607,21 @@ article[id^="projeto-"]:target {
   /* Os picos de luz ficam contidos porque o texto secundário passa por cima
      deles; a amplitude entre claro e escuro vem das sombras, que podem ser
      fortes sem custar contraste nenhum. */
-  --atm-i1: 0.3;
-  --atm-i2: 0.23;
+  --atm-i1: 0.26;
+  --atm-i2: 0.21;
   --atm-i3: 0.2;
   --atm-i4: 0.17;
   --atm-i5: 0.18;
   --atm-i6: 0.15;
   --atm-s1: 0.36;
   --atm-s2: 0.3;
+
+  /* Intensidade das três ondulações. Baixa de propósito: elas existem como
+     mudança de iluminação, e contraste forte entre uma curva e a seguinte é
+     justamente o que faria voltarem a parecer faixas empilhadas. */
+  --atm-c1: 0.16;
+  --atm-c2: 0.13;
+  --atm-c3: 0.11;
 
   background:
     /* --- fontes de luz --- */
@@ -695,6 +702,64 @@ article[id^="projeto-"]:target {
   --atm-i6: 0.028;
   --atm-s1: 0.03;
   --atm-s2: 0.026;
+  --atm-c1: 0.042;
+  --atm-c2: 0.034;
+  --atm-c3: 0.028;
+}
+
+/* --- As grandes ondulações ---
+
+   A curva não é uma forma posta sobre o fundo: é o flanco de uma elipse
+   enorme, quase toda fora da tela. Só um trecho do arco atravessa a
+   viewport, e sobre uma elipse desse tamanho o arco é quase reto — daí a
+   curva larga e aberta, em vez de círculo.
+
+   O desfoque pesado é o que transforma a silhueta em transição de luz. Foi
+   aqui que a tentativa com SVG falhou: caminho fechado tem borda, e borda
+   vira faixa por mais suave que seja o preenchimento. Uma silhueta desfocada
+   em 130px não tem onde mostrar contorno.
+
+   O preenchimento é linear, não radial, para a curva ter um lado mais claro
+   e outro cedendo — é isso que lê como mudança de iluminação atravessando o
+   fundo, e não como mancha. */
+.fundo-vivo::before,
+.fundo-vivo::after {
+  content: "";
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+/* Curva principal, alta: o arco de baixo cruza o terço superior. */
+.fundo-vivo::before {
+  width: 196%;
+  height: 124%;
+  left: -52%;
+  top: -80%;
+  background: linear-gradient(
+    168deg,
+    rgba(var(--atm-luz-1), var(--atm-c1)) 0%,
+    rgba(var(--atm-luz-2), calc(var(--atm-c1) * 0.5)) 58%,
+    transparent 86%
+  );
+  filter: blur(120px);
+}
+
+/* Segunda transição, mais abaixo e vindo do outro lado: o arco de cima cruza
+   a faixa inferior. Vir de outra direção é o que evita as duas parecerem a
+   mesma onda repetida. */
+.fundo-vivo::after {
+  width: 214%;
+  height: 132%;
+  right: -74%;
+  bottom: -88%;
+  background: linear-gradient(
+    12deg,
+    rgba(var(--atm-lilas), var(--atm-c2)) 0%,
+    rgba(var(--atm-luz-4), calc(var(--atm-c2) * 0.48)) 62%,
+    transparent 88%
+  );
+  filter: blur(130px);
 }
 
 /* Camada de brilho: manchas muito desfocadas, quase fundidas à base. Elas
@@ -733,6 +798,26 @@ article[id^="projeto-"]:target {
       rgba(var(--atm-luz-2), 0.4) 0%,
       transparent 70%
     );
+}
+
+/* Terceira ondulação, no meio e bem mais discreta. Fica nesta camada, e não
+   nas duas de cima, porque esta se desloca com a rolagem: assim a curva do
+   meio atravessa a página conforme se desce, em vez de ficar parada na mesma
+   altura da tela. */
+.fundo-brilho::before {
+  content: "";
+  position: absolute;
+  width: 188%;
+  height: 46%;
+  left: -44%;
+  top: 36%;
+  border-radius: 50%;
+  background: linear-gradient(
+    174deg,
+    rgba(var(--atm-luz-3), var(--atm-c3)) 0%,
+    rgba(var(--atm-luz-1), calc(var(--atm-c3) * 0.45)) 60%,
+    transparent 88%
+  );
 }
 
 /* As manchas têm alfa fixo, que sobre branco pesa muito mais do que sobre
@@ -787,6 +872,17 @@ article[id^="projeto-"]:target {
     inset: -50% -34%;
     filter: blur(70px);
     opacity: 0.5;
+  }
+
+  /* Desfoque de 120px sobre um elemento quase duas vezes a tela custa caro em
+     aparelho fraco. Em tela estreita a curva já é bem mais larga que a
+     viewport, então menos desfoque não devolve contorno nenhum. */
+  .fundo-vivo::before {
+    filter: blur(80px);
+  }
+
+  .fundo-vivo::after {
+    filter: blur(85px);
   }
 }
 /* Flutuação quase imperceptível das etiquetas sobre o mockup. Cada uma
