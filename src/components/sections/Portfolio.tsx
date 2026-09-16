@@ -1,6 +1,7 @@
 import Image from "next/image";
 import { Container } from "@/components/ui/Container";
 import { Reveal } from "@/components/ui/Reveal";
+import { Stagger } from "@/components/ui/Stagger";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { ExternalIcon } from "@/components/ui/icons";
 import { content } from "@/content";
@@ -18,9 +19,12 @@ export function Portfolio() {
           subtitle={portfolio.subtitle}
         />
 
+        {/* Cada projeto se revela sozinho, não em cascata com os outros: são
+            blocos altos, e quando um entra na tela o seguinte ainda está
+            longe da dobra. A cascata vale dentro do card. */}
         <div className="mt-14 flex flex-col gap-8">
           {portfolio.projects.map((project, i) => (
-            <Reveal key={project.id} delay={i * 100}>
+            <Reveal key={project.id}>
               <ProjectCard project={project} reversed={i % 2 === 1} />
             </Reveal>
           ))}
@@ -49,9 +53,11 @@ function ProjectCard({
         isComingSoon ? "opacity-90" : ""
       }`}
     >
-      {/* Área da imagem */}
-      <div
-        className={`relative min-h-[260px] lg:min-h-[400px] ${
+      {/* Área da imagem. A arte é descoberta de baixo para cima em vez de
+          aparecer inteira — é o primeiro movimento do card, antes do texto. */}
+      <Reveal
+        variante="cortina"
+        className={`projeto-arte relative min-h-[260px] lg:min-h-[400px] ${
           reversed ? "lg:order-2" : ""
         }`}
       >
@@ -66,10 +72,11 @@ function ProjectCard({
         ) : (
           <ScreenshotPlaceholder label={project.name} />
         )}
-      </div>
+      </Reveal>
 
-      {/* Conteúdo */}
-      <div className="relative flex flex-col justify-center gap-5 p-7 sm:p-10">
+      {/* Conteúdo, em cascata: categoria, nome, descrição, recursos e botão
+          entram nessa ordem, logo depois da arte. */}
+      <Stagger className="relative flex flex-col justify-center gap-5 p-7 sm:p-10">
         <div>
           <span className="pill text-xs text-muted">{project.category}</span>
 
@@ -135,7 +142,7 @@ function ProjectCard({
             </span>
           )}
         </div>
-      </div>
+      </Stagger>
     </article>
   );
 }

@@ -31,20 +31,13 @@ export const ptBR: SiteContent = {
     ],
   },
 
+  // Só a legenda da faixa de abertura. O bloco de apoio que ficava logo
+  // abaixo dela — chamada, dois botões e a linha de benefícios — saiu do
+  // site; a conversa de venda agora acontece inteira na seção de prévia.
   hero: {
     badge: "Desenvolvimento web sob medida",
     title: "Sites e sistemas feitos",
     titleHighlight: "sob medida para o seu negócio",
-    pitch: "Veja seu site antes de decidir.",
-    subtitle:
-      "Desenvolvemos sites institucionais, landing pages, sistemas de agendamento e dashboards sob medida. Conte o que a sua empresa precisa e montamos uma prévia do projeto.",
-    primaryCta: "Ver a prévia do meu site",
-    secondaryCta: "Ver nossos projetos",
-    highlights: [
-      { value: "Sob medida", label: "Nada de template pronto" },
-      { value: "Responsivo", label: "Funciona bem no celular" },
-      { value: "Direto ao ponto", label: "Você fala com quem programa" },
-    ],
   },
 
   /**
@@ -56,6 +49,30 @@ export const ptBR: SiteContent = {
     title: "Peça sua prévia grátis",
     subtitle:
       "Responda algumas perguntas sobre o seu negócio. Com elas montamos uma prévia do seu projeto e voltamos para conversar.",
+    marca: "JGF / Prévia",
+    vitrine: {
+      titulo: "Veja seu site antes de decidir.",
+      descricao:
+        "Conte o que a sua empresa precisa e montamos uma prévia do projeto para você olhar com calma. Só depois disso a gente fala de proposta.",
+      beneficios: [
+        {
+          titulo: "Sob medida",
+          descricao:
+            "A prévia é montada a partir do que você contar sobre o seu negócio, não de um modelo pronto.",
+        },
+        {
+          titulo: "Responsivo",
+          descricao:
+            "Pensado desde o começo para funcionar bem no celular, no tablet e no computador.",
+        },
+        {
+          titulo: "Sem compromisso",
+          descricao:
+            "Você vê a prévia antes de decidir qualquer coisa. Se não fizer sentido, ficamos por aqui.",
+        },
+      ],
+      cta: "Quero ver minha prévia",
+    },
     progressoLabel: "Etapa {atual} de {total}",
     continuar: "Continuar",
     voltar: "Voltar",
@@ -93,7 +110,7 @@ export const ptBR: SiteContent = {
       },
       {
         id: "empresa",
-        nome: "Empresa",
+        nome: "Negócio",
         titulo: "Agora, sobre a sua empresa.",
         campos: [
           {
@@ -186,7 +203,7 @@ export const ptBR: SiteContent = {
       },
     ],
     revisao: {
-      nome: "Revisão",
+      nome: "Finalização",
       titulo: "Perfeito! É só revisar e enviar.",
       subtitle:
         "Confira as respostas abaixo. Dá para voltar e corrigir qualquer uma antes de enviar.",

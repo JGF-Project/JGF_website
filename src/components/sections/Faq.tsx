@@ -1,5 +1,5 @@
 import { Container } from "@/components/ui/Container";
-import { Reveal } from "@/components/ui/Reveal";
+import { Stagger } from "@/components/ui/Stagger";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { PlusIcon } from "@/components/ui/icons";
 import { content } from "@/content";
@@ -19,24 +19,29 @@ export function Faq() {
           subtitle={faq.subtitle}
         />
 
-        {/* Cards separados, cada um com a borda que acende da referência */}
-        <div className="mx-auto mt-12 flex max-w-3xl flex-col gap-3">
-          {faq.items.map((item, i) => (
-            <Reveal key={item.question} delay={i * 60}>
-              <details className="edge-glow group rounded-card">
-                <summary className="flex cursor-pointer list-none items-center justify-between gap-4 px-6 py-5 text-left text-base font-medium transition-colors hover:text-brand [&::-webkit-details-marker]:hidden">
-                  {item.question}
-                  <span className="grid h-8 w-8 shrink-0 place-items-center rounded-min border border-border text-muted transition-transform duration-300 group-open:rotate-45 group-open:border-brand group-open:text-brand">
-                    <PlusIcon />
-                  </span>
-                </summary>
-                <div className="px-6 pb-5 text-sm leading-relaxed text-muted">
-                  {item.answer}
-                </div>
-              </details>
-            </Reveal>
+        {/* Cards separados, cada um com a borda que acende da referência.
+            Perguntas empilhadas são a fileira mais longa do site, então o
+            passo é curto: com 60ms a lista inteira termina de entrar antes
+            de o visitante chegar ao fim dela. */}
+        <Stagger
+          variante="surgir"
+          passo={60}
+          className="mx-auto mt-12 flex max-w-3xl flex-col gap-3"
+        >
+          {faq.items.map((item) => (
+            <details key={item.question} className="edge-glow group rounded-card">
+              <summary className="flex cursor-pointer list-none items-center justify-between gap-4 px-6 py-5 text-left text-base font-medium transition-colors hover:text-brand [&::-webkit-details-marker]:hidden">
+                {item.question}
+                <span className="grid h-8 w-8 shrink-0 place-items-center rounded-min border border-border text-muted transition-transform duration-300 group-open:rotate-45 group-open:border-brand group-open:text-brand">
+                  <PlusIcon />
+                </span>
+              </summary>
+              <div className="px-6 pb-5 text-sm leading-relaxed text-muted">
+                {item.answer}
+              </div>
+            </details>
           ))}
-        </div>
+        </Stagger>
       </Container>
     </section>
   );

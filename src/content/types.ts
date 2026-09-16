@@ -143,21 +143,25 @@ export interface SiteContent {
     description: string;
     keywords: string[];
   };
+  /** Legenda sobre a faixa de abertura. */
   hero: {
     badge: string;
     title: string;
     titleHighlight: string;
-    /** Chamada comercial do bloco à direita da imagem. */
-    pitch: string;
-    subtitle: string;
-    primaryCta: string;
-    secondaryCta: string;
-    highlights: { value: string; label: string }[];
   };
   previa: {
     eyebrow: string;
     title: string;
     subtitle: string;
+    /** Identificador discreto no alto do painel do formulário. */
+    marca: string;
+    /** Coluna de convencimento, ao lado do formulário. */
+    vitrine: {
+      titulo: string;
+      descricao: string;
+      beneficios: readonly { titulo: string; descricao: string }[];
+      cta: string;
+    };
     progressoLabel: string;
     etapas: readonly PreviaEtapa[];
     continuar: string;

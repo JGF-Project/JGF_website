@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Container } from "@/components/ui/Container";
 import { Reveal } from "@/components/ui/Reveal";
+import { Stagger } from "@/components/ui/Stagger";
 import {
   ArrowRightIcon,
   CheckIcon,
@@ -32,7 +33,12 @@ export function Contact() {
       <Container>
         <Reveal>
           <div className="panel noise px-6 py-14 sm:px-12 sm:py-20">
-            <div className="relative flex flex-col items-center text-center">
+            {/* O fecho do site entra em cascata, de cima para baixo: rótulo,
+                título, texto, botões e, por último, o Instagram. */}
+            <Stagger
+              passo={100}
+              className="relative flex flex-col items-center text-center"
+            >
               <span className="pill">{contact.eyebrow}</span>
 
               <h2 className="mt-6 max-w-2xl text-3xl font-semibold text-balance sm:text-5xl sm:leading-[1.08]">
@@ -89,7 +95,7 @@ export function Contact() {
                   {site.social.instagram.handle}
                 </a>
               </div>
-            </div>
+            </Stagger>
           </div>
         </Reveal>
       </Container>

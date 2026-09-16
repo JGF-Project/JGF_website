@@ -3,6 +3,7 @@
 import { useEffect, useId, useRef, useState } from "react";
 import { Container } from "@/components/ui/Container";
 import { Reveal } from "@/components/ui/Reveal";
+import { Stagger } from "@/components/ui/Stagger";
 import { ArrowRightIcon, CheckIcon, MailIcon } from "@/components/ui/icons";
 import { content } from "@/content";
 import { site } from "@/lib/site";
@@ -27,6 +28,8 @@ export function Previa() {
   const etapas = previa.etapas;
   /** As etapas de perguntas mais a revisão. */
   const totalPassos = etapas.length + 1;
+  /** Nomes exibidos na régua de etapas, incluindo a revisão no fim. */
+  const nomesEtapas = [...etapas.map((e) => e.nome), previa.revisao.nome];
 
   const [passo, setPasso] = useState(0);
   const [respostas, setRespostas] = useState<Respostas>({});
@@ -35,6 +38,7 @@ export function Previa() {
 
   const idBase = useId();
   const tituloRef = useRef<HTMLHeadingElement>(null);
+  const painelRef = useRef<HTMLDivElement>(null);
   const primeiraRenderizacao = useRef(true);
 
   // Ao trocar de etapa, o foco vai para o título dela. Sem isso, quem navega
@@ -120,12 +124,73 @@ export function Previa() {
     setEnviado(false);
   }
 
+  /**
+   * O botão da coluna da esquerda leva ao formulário.
+   *
+   * No celular ele está logo abaixo; no desktop, ao lado. Em vez de um link
+   * de âncora — que no desktop rolaria a página sem motivo, já que o painel
+   * quase sempre já está visível — o foco vai direto para o primeiro campo.
+   * Quem usa teclado ou leitor de tela chega exatamente onde precisa digitar.
+   */
+  function irParaFormulario() {
+    const campo = painelRef.current?.querySelector<HTMLElement>(
+      "input, select, textarea",
+    );
+
+    if (!campo) return;
+
+    campo.focus();
+    // `focus` sozinho já rola o necessário na maioria dos casos, mas de forma
+    // abrupta; centralizar o painel deixa a etapa inteira à vista.
+    painelRef.current?.scrollIntoView({ block: "center" });
+  }
+
   return (
     <section id="previa" className="scroll-mt-24 py-20 sm:py-28">
       <Container>
-        <Reveal>
-          <div className="previa-card mx-auto w-full max-w-3xl">
-            {enviado ? (
+        {/* Duas colunas: à esquerda o convite, à direita a ferramenta.
+            O argumento e a ação ficam lado a lado, e o painel deixa de ser um
+            bloco solto no meio da página — o fundo azul do site passa em
+            volta dele e entre as duas colunas. */}
+        <div className="previa-composicao">
+          <Stagger passo={110} className="previa-convite">
+            <h2 className="previa-vitrine-titulo">{previa.vitrine.titulo}</h2>
+
+            <p className="previa-vitrine-texto">{previa.vitrine.descricao}</p>
+
+            <ul className="previa-beneficios">
+              {previa.vitrine.beneficios.map((beneficio) => (
+                <li key={beneficio.titulo} className="previa-beneficio">
+                  <span className="previa-beneficio-marca" aria-hidden>
+                    <CheckIcon className="h-3.5 w-3.5" />
+                  </span>
+                  <span>
+                    <span className="previa-beneficio-titulo">
+                      {beneficio.titulo}
+                    </span>
+                    <span className="previa-beneficio-texto">
+                      {beneficio.descricao}
+                    </span>
+                  </span>
+                </li>
+              ))}
+            </ul>
+
+            <div>
+              <button
+                type="button"
+                onClick={irParaFormulario}
+                className="previa-botao previa-botao-principal"
+              >
+                {previa.vitrine.cta}
+                <ArrowRightIcon className="h-4 w-4" />
+              </button>
+            </div>
+          </Stagger>
+
+          <Reveal className="previa-painel-area" delay={120}>
+            <div ref={painelRef} className="previa-card">
+              {enviado ? (
               <div className="previa-passo text-center">
                 <span className="previa-selo" aria-hidden>
                   <CheckIcon className="h-6 w-6" />
@@ -157,14 +222,36 @@ export function Previa() {
               </div>
             ) : (
               <>
-                <header>
-                  <span className="previa-eyebrow">{previa.eyebrow}</span>
-                  <h2 className="previa-titulo mt-4">{previa.title}</h2>
-                  <p className="previa-apoio mt-3">{previa.subtitle}</p>
-                </header>
+                {/* Assinatura discreta, como o cabeçalho de uma ferramenta.
+                    O título e o texto de apoio da seção agora vivem na coluna
+                    da esquerda; repeti-los aqui seria dizer duas vezes a mesma
+                    coisa a meio palmo de distância. */}
+                <p className="previa-marca">{previa.marca}</p>
+
+                {/* Régua de etapas. Mostra o caminho inteiro — não só onde a
+                    pessoa está, mas quanto falta e o que vem pela frente.
+                    A lista é decorativa para quem usa leitor de tela: o
+                    `progressbar` logo abaixo já anuncia etapa e total, e
+                    repetir os quatro nomes a cada troca seria ruído. */}
+                <ol className="previa-regua" aria-hidden>
+                  {nomesEtapas.map((nome, i) => (
+                    <li
+                      key={nome}
+                      className="previa-regua-item"
+                      data-estado={
+                        i === passo ? "atual" : i < passo ? "feita" : "futura"
+                      }
+                    >
+                      <span className="previa-regua-numero">
+                        {String(i + 1).padStart(2, "0")}
+                      </span>
+                      <span className="previa-regua-nome">{nome}</span>
+                    </li>
+                  ))}
+                </ol>
 
                 <div
-                  className="previa-progresso mt-8"
+                  className="previa-progresso"
                   role="progressbar"
                   aria-valuemin={1}
                   aria-valuemax={totalPassos}
@@ -173,22 +260,13 @@ export function Previa() {
                     .replace("{atual}", String(passo + 1))
                     .replace("{total}", String(totalPassos))}
                 >
-                  {Array.from({ length: totalPassos }, (_, i) => (
-                    <span
-                      key={i}
-                      className="previa-barra"
-                      data-preenchida={i <= passo}
-                    />
-                  ))}
+                  <span
+                    className="previa-progresso-avanco"
+                    style={{
+                      transform: `scaleX(${(passo + 1) / totalPassos})`,
+                    }}
+                  />
                 </div>
-
-                <p className="previa-etapa-conta mt-3">
-                  {previa.progressoLabel
-                    .replace("{atual}", String(passo + 1))
-                    .replace("{total}", String(totalPassos))}
-                  {" · "}
-                  {naRevisao ? previa.revisao.nome : etapaAtual?.nome}
-                </p>
 
                 <form onSubmit={aoEnviar} noValidate>
                   {/* A chave troca a cada etapa, então o bloco é remontado e a
@@ -298,9 +376,10 @@ export function Previa() {
                   </div>
                 </form>
               </>
-            )}
-          </div>
-        </Reveal>
+              )}
+            </div>
+          </Reveal>
+        </div>
       </Container>
     </section>
   );

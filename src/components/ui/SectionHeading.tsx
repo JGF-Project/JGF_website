@@ -1,5 +1,16 @@
-import { Reveal } from "./Reveal";
+import { Stagger } from "./Stagger";
 
+/**
+ * Cabeçalho de seção.
+ *
+ * Os três pedaços entram em sequência — rótulo, título, texto de apoio — em
+ * vez de o bloco inteiro aparecer de uma vez. Como quase toda seção do site
+ * usa este cabeçalho, é daqui que vem boa parte da sensação de a página ir
+ * se montando conforme desce.
+ *
+ * O passo é curto: são só três elementos próximos, e um intervalo longo
+ * deixaria o título esperando pelo rótulo.
+ */
 export function SectionHeading({
   eyebrow,
   title,
@@ -14,7 +25,8 @@ export function SectionHeading({
   const isCenter = align === "center";
 
   return (
-    <Reveal
+    <Stagger
+      passo={110}
       className={`flex flex-col gap-5 ${
         isCenter ? "items-center text-center" : "items-start text-left"
       }`}
@@ -34,6 +46,6 @@ export function SectionHeading({
           {subtitle}
         </p>
       )}
-    </Reveal>
+    </Stagger>
   );
 }

@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { Container } from "@/components/ui/Container";
 import { Reveal } from "@/components/ui/Reveal";
+import { Stagger } from "@/components/ui/Stagger";
 import { serviceIcons, GlobeIcon, PlusIcon } from "@/components/ui/icons";
 import { content } from "@/content";
 
@@ -56,14 +57,14 @@ export function Services() {
 
         {/* No celular vira uma faixa que rola de lado, para os quatro caberem
             sem virar uma pilha alta demais antes do conteúdo. */}
-        <div className="servicos-faixa mt-6">
-          {services.items.map((service, i) => {
+        <Stagger variante="surgir" passo={70} className="servicos-faixa mt-6">
+          {services.items.map((service) => {
             const Icon =
               serviceIcons[service.id as keyof typeof serviceIcons] ?? GlobeIcon;
             const estaAberto = aberto === service.id;
 
             return (
-              <Reveal key={service.id} delay={i * 70} className="servicos-celula">
+              <div key={service.id} className="servicos-celula">
                 <button
                   type="button"
                   id={`servico-${service.id}`}
@@ -87,10 +88,10 @@ export function Services() {
                     <PlusIcon className="h-3.5 w-3.5" />
                   </span>
                 </button>
-              </Reveal>
+              </div>
             );
           })}
-        </div>
+        </Stagger>
 
         {/* Um painel só, reaproveitado. `grid-template-rows` de 0fr para 1fr é
             o que permite animar até a altura do conteúdo sem chutar um

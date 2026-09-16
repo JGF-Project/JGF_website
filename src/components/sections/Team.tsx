@@ -1,6 +1,7 @@
 import Image from "next/image";
 import { Container } from "@/components/ui/Container";
 import { Reveal } from "@/components/ui/Reveal";
+import { Stagger } from "@/components/ui/Stagger";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { content } from "@/content";
 import type { TeamMember } from "@/content/types";
@@ -17,9 +18,14 @@ export function Team() {
           subtitle={team.subtitle}
         />
 
-        {/* Apresentação institucional em painel, estilo "Project overview" */}
+        {/* Apresentação institucional em painel, estilo "Project overview".
+            Os parágrafos entram um a um, como um texto sendo escrito. */}
         <Reveal delay={80}>
-          <div className="panel noise mx-auto mt-12 max-w-3xl p-7 sm:p-10">
+          <Stagger
+            variante="surgir"
+            passo={120}
+            className="panel noise mx-auto mt-12 max-w-3xl p-7 sm:p-10"
+          >
             {team.about.map((paragraph, i) => (
               <p
                 key={i}
@@ -30,16 +36,14 @@ export function Team() {
                 {paragraph}
               </p>
             ))}
-          </div>
+          </Stagger>
         </Reveal>
 
-        <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {team.members.map((member, i) => (
-            <Reveal key={member.id} delay={i * 100}>
-              <MemberCard member={member} />
-            </Reveal>
+        <Stagger className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {team.members.map((member) => (
+            <MemberCard key={member.id} member={member} />
           ))}
-        </div>
+        </Stagger>
       </Container>
     </section>
   );

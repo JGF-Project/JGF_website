@@ -1,5 +1,6 @@
 import { Container } from "@/components/ui/Container";
 import { Reveal } from "@/components/ui/Reveal";
+import { Stagger } from "@/components/ui/Stagger";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { ArrowRightIcon } from "@/components/ui/icons";
 import { TechCarousel } from "./TechCarousel";
@@ -23,21 +24,25 @@ export function Tech() {
           subtitle={tech.subtitle}
         />
 
-        {/* Fluxo completo: deixa claro que o trabalho vai até o banco de dados */}
-        <Reveal delay={80}>
-          <div className="mt-8 flex flex-wrap items-center justify-center gap-2">
-            {tech.pipeline.map((etapa, i) => (
-              <span key={etapa} className="flex items-center gap-2">
-                <span className="pill border-accent/40 text-sm font-semibold text-accent">
-                  {etapa}
-                </span>
-                {i < ultimaEtapa && (
-                  <ArrowRightIcon className="h-3.5 w-3.5 text-accent/60" />
-                )}
+        {/* Fluxo completo: deixa claro que o trabalho vai até o banco de dados.
+            As etapas entram uma de cada vez, na ordem das setas — o próprio
+            movimento conta o percurso. */}
+        <Stagger
+          variante="surgir"
+          passo={90}
+          className="mt-8 flex flex-wrap items-center justify-center gap-2"
+        >
+          {tech.pipeline.map((etapa, i) => (
+            <span key={etapa} className="flex items-center gap-2">
+              <span className="pill border-accent/40 text-sm font-semibold text-accent">
+                {etapa}
               </span>
-            ))}
-          </div>
-        </Reveal>
+              {i < ultimaEtapa && (
+                <ArrowRightIcon className="h-3.5 w-3.5 text-accent/60" />
+              )}
+            </span>
+          ))}
+        </Stagger>
 
         <Reveal delay={140}>
           <div className="mt-10 sm:mt-12">

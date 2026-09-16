@@ -524,23 +524,181 @@
   }
 }
 
-/* Revelação ao rolar */
-.reveal {
+/* ---------------------------------------------------------------
+   Revelação ao rolar
+
+   Um sistema só para o site inteiro, em duas peças:
+
+   - `.reveal` revela um elemento. O componente `Reveal` marca
+     `data-visible` quando ele entra na tela.
+   - `.sequencia` revela os filhos em cascata. O componente `Stagger` observa
+     só o contêiner, e o atraso de cada filho sai do `nth-child` — assim não
+     é preciso calcular `delay={i * 100}` em cada seção nem abrir um
+     observador por cartão.
+
+   Só `opacity`, `transform` e `clip-path` se movem: as três são resolvidas
+   pelo compositor, sem recalcular layout enquanto a página rola.
+
+   Sem JavaScript nada disso existe (`@media (scripting: enabled)`), e com
+   `prefers-reduced-motion` tudo nasce visível — as regras estão no bloco de
+   movimento reduzido mais abaixo.
+   --------------------------------------------------------------- */
+
+.reveal,
+.sequencia > * {
   transition:
     opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1),
-    transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    transform 0.8s cubic-bezier(0.16, 1, 0.3, 1),
+    clip-path 0.9s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.reveal {
   transition-delay: var(--reveal-delay, 0ms);
 }
 
 @media (scripting: enabled) {
-  .reveal {
+  .reveal,
+  .sequencia > * {
     opacity: 0;
     transform: translateY(26px);
   }
 
-  .reveal[data-visible="true"] {
+  .reveal[data-visible="true"],
+  .sequencia[data-visible="true"] > * {
     opacity: 1;
     transform: none;
+  }
+
+  /* Deslocamento curto, para item de lista e detalhe pequeno: ao lado dos
+     vizinhos, um percurso longo vira agitação. */
+  .reveal[data-variante="surgir"],
+  .sequencia[data-variante="surgir"] > * {
+    transform: translateY(12px);
+  }
+
+  /* A imagem é descoberta de baixo para cima em vez de aparecer inteira.
+     O `inset()` anima porque as duas formas têm a mesma sintaxe. */
+  .reveal[data-variante="cortina"],
+  .sequencia[data-variante="cortina"] > * {
+    transform: none;
+    clip-path: inset(100% 0 0 0);
+  }
+
+  .reveal[data-variante="cortina"][data-visible="true"],
+  .sequencia[data-variante="cortina"][data-visible="true"] > * {
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+/* A cascata. Doze passos bastam para as maiores fileiras do site; do décimo
+   terceiro em diante todos entram juntos, porque a essa altura o item já
+   está longe da dobra e o atraso viraria espera. */
+.sequencia > * {
+  transition-delay: calc(var(--passo, 90ms) * var(--ordem, 0));
+}
+
+.sequencia > *:nth-child(2) {
+  --ordem: 1;
+}
+.sequencia > *:nth-child(3) {
+  --ordem: 2;
+}
+.sequencia > *:nth-child(4) {
+  --ordem: 3;
+}
+.sequencia > *:nth-child(5) {
+  --ordem: 4;
+}
+.sequencia > *:nth-child(6) {
+  --ordem: 5;
+}
+.sequencia > *:nth-child(7) {
+  --ordem: 6;
+}
+.sequencia > *:nth-child(8) {
+  --ordem: 7;
+}
+.sequencia > *:nth-child(9) {
+  --ordem: 8;
+}
+.sequencia > *:nth-child(10) {
+  --ordem: 9;
+}
+.sequencia > *:nth-child(11) {
+  --ordem: 10;
+}
+.sequencia > *:nth-child(n + 12) {
+  --ordem: 11;
+}
+
+/* ---------------------------------------------------------------
+   Linha de avanço do "Como trabalhamos"
+
+   Uma régua fina que se preenche conforme a seção atravessa a tela: o
+   progresso da leitura vira progresso visível.
+
+   São dois caminhos. Onde há linha do tempo de rolagem (`view()`), o
+   preenchimento segue a rolagem de verdade — anda junto com o dedo, e volta
+   se o visitante sobe. Onde não há, ele preenche uma vez quando a seção
+   aparece. O segundo caminho é a regra base de propósito: um navegador sem
+   suporte ignora o bloco `@supports` inteiro e fica com algo que funciona.
+   --------------------------------------------------------------- */
+.processo-trilho {
+  position: relative;
+  height: 2px;
+  overflow: hidden;
+  border-radius: var(--r-pill);
+  background: color-mix(in srgb, var(--border-forte) 60%, transparent);
+}
+
+.processo-avanco {
+  position: absolute;
+  inset: 0;
+  transform: scaleX(0);
+  transform-origin: left center;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--brand), var(--brand-vivo));
+  transition: transform 1.6s cubic-bezier(0.16, 1, 0.3, 1) 0.25s;
+}
+
+.reveal[data-visible="true"] .processo-avanco {
+  transform: scaleX(1);
+}
+
+@supports (animation-timeline: view()) {
+  .processo-avanco {
+    transition: none;
+    animation: preencher-trilho linear both;
+    animation-timeline: view();
+    /* Começa quando a régua entra e termina bem antes de sair: cheia só no
+       fim da tela, o visitante já teria passado pelos cards sem ver. */
+    animation-range: cover 12% cover 62%;
+  }
+}
+
+@keyframes preencher-trilho {
+  to {
+    transform: scaleX(1);
+  }
+}
+
+/* ---------------------------------------------------------------
+   Arte dos projetos: aproxima devagar ao passar o cursor.
+
+   Só no ponteiro fino. No toque não existe estado de repouso — o zoom
+   dispararia junto com o rolar da página, e nada o desfaria depois.
+   --------------------------------------------------------------- */
+.projeto-arte {
+  overflow: hidden;
+}
+
+.projeto-arte img {
+  transition: scale 0.9s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .projeto-arte:hover img {
+    scale: 1.05;
   }
 }
 
@@ -903,10 +1061,29 @@ article[id^="projeto-"]:target {
     scroll-behavior: auto;
   }
 
-  .reveal {
-    opacity: 1;
+  /* Movimento reduzido não quer dizer tela parada: o que incomoda é o
+     deslocamento, não a mudança de opacidade. Então some o translate, some o
+     clip-path e fica só um esmaecer curto — a página continua se montando
+     conforme desce, sem nada atravessando a tela.
+     Isso também importa na prática: o Windows relata "reduzir movimento"
+     sempre que as animações do sistema estão desligadas, o que é comum. Com
+     a revelação cancelada de vez, boa parte dos visitantes não veria nenhuma
+     das animações do site.
+
+     Os seletores repetem `[data-variante]` de propósito: sem ele estas
+     regras perderiam para as das variantes, que carregam o atributo e pesam
+     mais.
+
+     Propriedades longas, não o atalho `transition`: o atalho zeraria o
+     `transition-delay`, e com ele iria embora a cascata — tudo apareceria de
+     uma vez só, justo onde a ordem é a única coisa que resta. */
+  .reveal[data-variante],
+  .sequencia[data-variante] > * {
     transform: none;
-    transition: none;
+    clip-path: none;
+    transition-property: opacity;
+    transition-duration: 0.45s;
+    transition-timing-function: ease;
   }
 
   .animate-float-slow,
@@ -1152,6 +1329,102 @@ article[id^="projeto-"]:target {
 }
 
 /* ---------------------------------------------------------------
+   Prévia: a composição de duas colunas.
+
+   À esquerda o convite — o que é, por que vale a pena, e o botão. À direita
+   o painel com o formulário. O texto fica sobre o fundo do site, sem caixa
+   própria, e só a ferramenta é enquadrada: assim o painel deixa de ser um
+   retângulo solto no meio da página e passa a ser a metade prática de uma
+   composição, com o azul do fundo correndo em volta e entre as colunas.
+
+   A coluna do formulário é um pouco mais larga que a do texto (1.15fr): é
+   nela que se digita, e campos apertados são piores do que linhas curtas.
+   --------------------------------------------------------------- */
+.previa-composicao {
+  display: grid;
+  gap: clamp(2.5rem, 5vw, 4.5rem);
+  align-items: center;
+}
+
+/* Sem isto a composição estoura a tela no celular. Item de grade nasce com
+   `min-width: auto`, ou seja, nunca encolhe abaixo do próprio conteúdo — e a
+   régua de etapas, que é feita de nomes que não quebram, puxava a coluna para
+   500px dentro de uma tela de 375px. */
+.previa-composicao > * {
+  min-width: 0;
+}
+
+@media (min-width: 1024px) {
+  .previa-composicao {
+    grid-template-columns: 1fr 1.15fr;
+    gap: clamp(3rem, 5vw, 5rem);
+  }
+}
+
+.previa-convite {
+  display: flex;
+  flex-direction: column;
+  gap: 1.75rem;
+  max-width: 34rem;
+}
+
+.previa-vitrine-titulo {
+  font-size: clamp(2rem, 5vw, 3.25rem);
+  font-weight: 600;
+  letter-spacing: -0.035em;
+  line-height: 1.05;
+  text-wrap: balance;
+}
+
+.previa-vitrine-texto {
+  font-size: 1.05rem;
+  line-height: 1.65;
+  color: var(--muted);
+  text-wrap: pretty;
+}
+
+/* --- Os três motivos --- */
+.previa-beneficios {
+  display: flex;
+  flex-direction: column;
+  gap: 1.15rem;
+}
+
+.previa-beneficio {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.85rem;
+}
+
+.previa-beneficio-marca {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 1.6rem;
+  height: 1.6rem;
+  margin-top: 0.1rem;
+  border-radius: var(--r-pill);
+  border: 1px solid color-mix(in srgb, var(--brand) 45%, transparent);
+  background: color-mix(in srgb, var(--brand) 14%, transparent);
+  color: var(--brand);
+}
+
+.previa-beneficio-titulo {
+  display: block;
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.previa-beneficio-texto {
+  display: block;
+  margin-top: 0.15rem;
+  font-size: 0.9rem;
+  line-height: 1.55;
+  color: var(--muted);
+  text-wrap: pretty;
+}
+
+/* ---------------------------------------------------------------
    Formulário de prévia.
 
    O card é escuro nos dois temas, de propósito: ele é o momento comercial da
@@ -1169,23 +1442,55 @@ article[id^="projeto-"]:target {
   --previa-erro: #ff8f8f;
 
   position: relative;
-  overflow: hidden;
+  isolation: isolate;
   border: 1px solid var(--previa-borda);
-  border-radius: 1.5rem;
-  background: var(--previa-fundo);
-  padding: clamp(1.5rem, 4vw, 3.5rem);
+  border-radius: 1.25rem;
+  /* Um toque de azul no canto de cima, dissolvendo no escuro. É o que tira o
+     ar de retângulo preto chapado sem acender o painel inteiro. */
+  background:
+    radial-gradient(
+        120% 90% at 82% -10%,
+        color-mix(in srgb, var(--brand-vivo) 13%, transparent),
+        transparent 62%
+      )
+      no-repeat,
+    var(--previa-fundo);
+  padding: clamp(1.5rem, 3.5vw, 2.75rem);
   color: var(--previa-texto);
-  box-shadow: 0 30px 80px -50px rgba(0, 0, 0, 0.9);
+  /* Sombra funda e aberta em vez de contorno marcado: o painel pousa sobre a
+     página em vez de ser colado nela. */
+  box-shadow:
+    0 1px 0 0 rgba(252, 252, 252, 0.06) inset,
+    0 40px 90px -60px rgba(0, 0, 0, 0.95);
 }
 
-.previa-eyebrow {
-  display: inline-flex;
-  font-size: 0.75rem;
-  font-weight: 600;
-  letter-spacing: 0.14em;
-  line-height: 1;
+/* Halo ciano bem discreto em volta do painel. Fica atrás dele, transborda a
+   borda e é o que costura o painel ao fundo azul do site. */
+.previa-card::before {
+  content: "";
+  position: absolute;
+  inset: -1.5px;
+  z-index: -1;
+  border-radius: inherit;
+  background: linear-gradient(
+    145deg,
+    color-mix(in srgb, var(--brand-vivo) 34%, transparent),
+    transparent 42%,
+    transparent 70%,
+    color-mix(in srgb, var(--brand-vivo) 14%, transparent)
+  );
+  opacity: 0.75;
+  pointer-events: none;
+}
+
+/* --- Assinatura no alto do painel --- */
+.previa-marca {
+  font-family: var(--font-mono, ui-monospace, monospace);
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.22em;
   text-transform: uppercase;
-  color: var(--brand-vivo);
+  color: color-mix(in srgb, var(--previa-suave) 80%, transparent);
 }
 
 .previa-titulo {
@@ -1215,33 +1520,93 @@ article[id^="projeto-"]:target {
   line-height: 1.25;
 }
 
-.previa-etapa-conta {
-  font-size: 0.75rem;
-  font-weight: 500;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--previa-suave);
-}
+/* ---------------------------------------------------------------
+   Régua de etapas.
 
-/* --- Barra de progresso: um traço por etapa --- */
-.previa-progresso {
+   Mostra o caminho inteiro, não só onde a pessoa está: as quatro etapas
+   numeradas, a atual em ciano, as já feitas apagadas e as futuras mais
+   apagadas ainda. Saber quanto falta é o que faz alguém terminar.
+
+   No celular ela rola de lado em vez de quebrar em duas linhas — quatro
+   nomes empilhados tomariam a altura da primeira pergunta.
+   --------------------------------------------------------------- */
+.previa-regua {
   display: flex;
-  gap: 0.4rem;
+  gap: 1.4rem;
+  margin-top: 1.5rem;
+  overflow-x: auto;
+  scrollbar-width: none;
+  /* O recuo devolvido nas laterais evita que o primeiro e o último item
+     nasçam colados na borda do painel ao rolar. */
+  margin-inline: calc(clamp(1.5rem, 3.5vw, 2.75rem) * -1);
+  padding-inline: clamp(1.5rem, 3.5vw, 2.75rem);
 }
 
-.previa-barra {
-  height: 4px;
-  flex: 1;
+.previa-regua::-webkit-scrollbar {
+  display: none;
+}
+
+.previa-regua-item {
+  display: flex;
+  align-items: baseline;
+  gap: 0.4rem;
+  white-space: nowrap;
+  transition: color 400ms ease;
+}
+
+.previa-regua-numero {
+  font-family: var(--font-mono, ui-monospace, monospace);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
+
+.previa-regua-nome {
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.previa-regua-item[data-estado="atual"] {
+  color: var(--brand-vivo);
+}
+
+.previa-regua-item[data-estado="feita"] {
+  color: color-mix(in srgb, var(--previa-suave) 85%, transparent);
+}
+
+.previa-regua-item[data-estado="futura"] {
+  color: color-mix(in srgb, var(--previa-suave) 45%, transparent);
+}
+
+/* --- Barra de progresso: um traço só, que avança --- */
+.previa-progresso {
+  position: relative;
+  overflow: hidden;
+  height: 2px;
+  margin-top: 1rem;
   border-radius: var(--r-pill);
   background: var(--previa-borda-forte);
-  transition: background-color 400ms ease;
 }
 
-.previa-barra[data-preenchida="true"] {
-  background: var(--brand-vivo);
+.previa-progresso-avanco {
+  position: absolute;
+  inset: 0;
+  transform-origin: left center;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--brand), var(--brand-vivo));
+  transition: transform 520ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-/* --- Entrada de cada etapa --- */
+/* ---------------------------------------------------------------
+   Troca de etapa: a atual sai, a próxima entra.
+
+   Sem media query de movimento reduzido em volta: o deslocamento é de 10px,
+   curto demais para incomodar, e desligá-lo faria a troca de pergunta
+   acontecer sem aviso nenhum — justamente onde a continuidade importa.
+   O bloco de movimento reduzido mais adiante encurta a distância.
+   --------------------------------------------------------------- */
 @keyframes previa-entra {
   from {
     opacity: 0;
@@ -1253,9 +1618,18 @@ article[id^="projeto-"]:target {
   }
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .previa-passo {
-    animation: previa-entra 380ms cubic-bezier(0.22, 1, 0.36, 1) both;
+.previa-passo {
+  animation: previa-entra 380ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  @keyframes previa-entra {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
   }
 }
 

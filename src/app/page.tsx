@@ -1,7 +1,6 @@
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { HeroVisual } from "@/components/sections/HeroVisual";
-import { Hero } from "@/components/sections/Hero";
 import { Previa } from "@/components/sections/Previa";
 import { Services } from "@/components/sections/Services";
 import { Process } from "@/components/sections/Process";
@@ -33,7 +32,6 @@ export default function Home() {
             carrossel, antes de qualquer bloco longo de texto. */}
         <HeroVisual />
         <Services />
-        <Hero />
         <Previa />
         <Process />
         <Portfolio />

@@ -1,5 +1,6 @@
 import { Container } from "@/components/ui/Container";
 import { Reveal } from "@/components/ui/Reveal";
+import { Stagger } from "@/components/ui/Stagger";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { content } from "@/content";
 
@@ -30,12 +31,23 @@ export function Process() {
               align="left"
             />
 
+            {/* A linha que se preenche conforme a seção atravessa a tela.
+                Decorativa: quem lê por leitor de tela já tem a ordem pela
+                numeração das etapas. */}
+            <div className="processo-trilho mt-12" aria-hidden>
+              <span className="processo-avanco" />
+            </div>
+
             {/* Cards sempre do mesmo tamanho: `auto-rows-fr` iguala a altura
                 de todas as linhas do grid (e não só a dos itens de uma mesma
                 linha), e as etiquetas ficam presas na base de cada card. */}
-            <ol className="relative z-10 mt-12 grid auto-rows-fr items-stretch gap-5 md:grid-cols-2 xl:grid-cols-4">
-              {process.steps.map((step, i) => (
-                <Reveal as="li" key={step.step} delay={i * 100}>
+            <Stagger
+              as="ol"
+              passo={110}
+              className="relative z-10 mt-6 grid auto-rows-fr items-stretch gap-5 md:grid-cols-2 xl:grid-cols-4"
+            >
+              {process.steps.map((step) => (
+                <li key={step.step}>
                   <article className="edge-glow flex h-full min-h-[280px] flex-col rounded-card p-6">
                     <div className="flex items-baseline justify-between gap-3">
                       <h3 className="text-lg font-semibold">{step.title}</h3>
@@ -54,9 +66,9 @@ export function Process() {
                       ))}
                     </ul>
                   </article>
-                </Reveal>
+                </li>
               ))}
-            </ol>
+            </Stagger>
           </div>
         </Reveal>
       </Container>
